@@ -59,5 +59,6 @@ namespace UserTransactions.Tests.Domain.Entities.User
             userEntity.IsActive.Should().BeFalse();
             userEntity.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
+
     }
 }
