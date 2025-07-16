@@ -27,11 +27,17 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Install dotnet coverage tool
-      run: dotnet tool install --global dotnet-coverage
+    - name: Run tests and generate coverage
+      run: |
+        dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
-    - name: Run tests with coverage
-      run: dotnet-coverage collect 'dotnet test --no-build' -f cobertura -o 'coverage.cobertura.xml'
+    - name: Convert coverage to cobertura format
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
+      with:
+        reports: 'TestResults/**/coverage.cobertura.xml'
+        targetdir: 'CoverageReport'
+        reporttypes: 'Cobertura'
+        verbosity: 'Info'
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
@@ -41,8 +47,6 @@ jobs:
           -Dsonar.projectKey=Flaviojcf_user-transactions
           -Dsonar.organization=flaviojcf
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.opencover.reportsPaths=coverage.cobertura.xml
+          -Dsonar.cs.opencover.reportsPaths=CoverageReport/Cobertura.xml
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
