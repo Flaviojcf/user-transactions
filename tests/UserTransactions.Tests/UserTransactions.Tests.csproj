@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Backend\UserTransactions.Domain\UserTransactions.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Backend\UserTransactions.Domain\UserTransactions.Domain.csproj" />
   </ItemGroup>
 
 </Project>
