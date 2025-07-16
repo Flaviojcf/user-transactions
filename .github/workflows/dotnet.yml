@@ -22,10 +22,10 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore UserTransactions/UserTransactions.sln
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build UserTransactions/UserTransactions.sln --no-restore
 
   test:
     runs-on: ubuntu-latest
@@ -40,11 +40,14 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore UserTransactions/UserTransactions.sln
 
       - name: Run tests and collect coverage
         run: |
-          dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
+          dotnet test UserTransactions/tests/UserTransactions.Tests/UserTransactions.Tests.csproj \
+            --no-build \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
 
       - name: Convert coverage to Cobertura format
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
@@ -81,7 +84,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
-          projectBaseDir: .
+          projectBaseDir: UserTransactions
           args: >
             -Dsonar.projectKey=Flaviojcf_user-transactions
             -Dsonar.organization=flaviojcf
