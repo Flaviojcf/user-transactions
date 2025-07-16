@@ -4,7 +4,7 @@ namespace UserTransactions.Domain.Entities
 {
     public class Wallet : BaseEntity
     {
-        public Wallet(Guid userId, decimal initialBalance = 0)
+        public Wallet(Guid userId, decimal initialBalance)
         {
             UserId = userId;
             Balance = initialBalance;

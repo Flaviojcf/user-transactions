@@ -2,7 +2,7 @@
 using UserTransactions.Tests.Shared.Builders.Entities;
 using UserEntity = UserTransactions.Domain.Entities.User;
 
-namespace UserTransactions.Tests.Domain.Entities.User
+namespace UserTransactions.Tests.Domain.Entities
 {
     public class UserEntityTest
     {
