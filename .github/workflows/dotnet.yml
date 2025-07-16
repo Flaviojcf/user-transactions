@@ -47,6 +47,6 @@ jobs:
           -Dsonar.projectKey=Flaviojcf_user-transactions
           -Dsonar.organization=flaviojcf
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.opencover.reportsPaths=CoverageReport/Cobertura.xml
+          -Dsonar.cs.cobertura.reportsPaths=CoverageReport/Cobertura.xml
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
