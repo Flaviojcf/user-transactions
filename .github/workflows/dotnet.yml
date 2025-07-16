@@ -16,6 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Fetch all history for full blame information
+      run: git fetch --prune --unshallow
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -27,16 +30,16 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Run tests and generate coverage
+    - name: Run tests with coverage
       run: |
         dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
-    - name: Convert coverage to cobertura format
+    - name: Convert coverage to OpenCover format
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
       with:
         reports: 'TestResults/**/coverage.cobertura.xml'
         targetdir: 'CoverageReport'
-        reporttypes: 'Cobertura'
+        reporttypes: 'opencover'
         verbosity: 'Info'
 
     - name: SonarCloud Scan
@@ -47,6 +50,6 @@ jobs:
           -Dsonar.projectKey=Flaviojcf_user-transactions
           -Dsonar.organization=flaviojcf
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.cs.cobertura.reportsPaths=CoverageReport/Cobertura.xml
+          -Dsonar.cs.opencover.reportsPaths=CoverageReport/opencover.xml
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
