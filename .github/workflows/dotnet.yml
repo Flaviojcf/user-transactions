@@ -37,8 +37,12 @@ jobs:
       uses: SonarSource/sonarcloud-github-action@v2
       with:
         projectBaseDir: .
+        args: >
+          -Dsonar.projectKey=Flaviojcf_user-transactions
+          -Dsonar.organization=flaviojcf
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.cs.opencover.reportsPaths=coverage.cobertura.xml
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_PROJECT_KEY: Flaviojcf_user-transactions
-        SONAR_ORG: flaviojcf
+
 
