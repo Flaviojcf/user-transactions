@@ -13,7 +13,6 @@ namespace UserTransactions.Application.DI
 
         public static void AddUseCases(this IServiceCollection services)
         {
-            // Register application use cases here
         }
     }
 }
