@@ -117,7 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SaldoInsuficiente" xml:space="preserve">
+  <data name="InsufficientBalance" xml:space="preserve">
     <value>Saldo insuficiente.</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>O Email é obrigatório.</value>
+  </data>
+  <data name="FullNameRequired" xml:space="preserve">
+    <value>O nome completo é obrigatório.</value>
+  </data>
+  <data name="CpfRequired" xml:space="preserve">
+    <value>O cpf é obrigatório.</value>
+  </data>
+  <data name="InvalidUserType" xml:space="preserve">
+    <value>O tipo de usuário informado é inválido.</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>A senha é obrigatória.</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Senha inválida. É preciso ter mais de 6 caracteres.</value>
+  </data>
+  <data name="InvalidEmailFormat" xml:space="preserve">
+    <value>O formato do e-mail é inválido.</value>
+  </data>
+  <data name="InvalidCpfFormat" xml:space="preserve">
+    <value>O formato do cpf é inválido.</value>
+  </data>
+  <data name="EmailIsNotUnique" xml:space="preserve">
+    <value>O e-mail informado já foi registrado.</value>
+  </data>
+  <data name="CpfIsNotUnique" xml:space="preserve">
+    <value>O cpf informado já foi cadastrado.</value>
   </data>
 </root>

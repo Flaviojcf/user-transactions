@@ -5,5 +5,7 @@ namespace UserTransactions.Domain.Repositories.User
     public interface IUserRepository
     {
         Task AddAsync(UserEntity user);
+        Task<bool> IsEmailAlreadyRegistered(string email);
+        Task<bool> IsCpfAlreadyRegistered(string cpf);
     }
 }

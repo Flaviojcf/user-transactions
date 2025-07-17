@@ -13,7 +13,7 @@ namespace UserTransactions.Domain.Entities
 
         public void Debit(decimal amount)
         {
-            if (Balance <= 0) throw new DomainException(ResourceMessagesException.SaldoInsuficiente);
+            if (Balance <= 0) throw new DomainException(ResourceMessagesException.InsufficientBalance);
         }
 
         public void Credit(decimal amount)
