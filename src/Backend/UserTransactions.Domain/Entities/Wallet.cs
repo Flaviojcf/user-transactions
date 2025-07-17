@@ -1,19 +1,19 @@
-﻿using UserTransactions.Domain.Exceptions;
+﻿using UserTransactions.Exception;
+using UserTransactions.Exception.Exceptions;
 
 namespace UserTransactions.Domain.Entities
 {
     public class Wallet : BaseEntity
     {
-        public Wallet(Guid userId, decimal initialBalance = 0)
+        public Wallet(Guid userId, decimal initialBalance)
         {
             UserId = userId;
             Balance = initialBalance;
         }
 
-        //Todo: Repassar mensagem para Designer
         public void Debit(decimal amount)
         {
-            if (Balance <= 0) throw new DomainException("Saldo insuficiente.");
+            if (Balance <= 0) throw new DomainException(ResourceMessagesException.SaldoInsuficiente);
         }
 
         public void Credit(decimal amount)
