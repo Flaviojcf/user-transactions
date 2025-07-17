@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Domain.Entities;
 
 namespace UserTransactions.Infrastructure.Persistance.Configuration
 {
+    [ExcludeFromCodeCoverage]
     public sealed class UserConfiguration : BaseConfiguration<User>
     {
         public override void Configure(EntityTypeBuilder<User> builder)

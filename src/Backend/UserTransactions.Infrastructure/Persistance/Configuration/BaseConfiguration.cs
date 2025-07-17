@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Domain.Entities;
 
 namespace UserTransactions.Infrastructure.Persistance.Configuration
 {
+    [ExcludeFromCodeCoverage]
     public abstract class BaseConfiguration<T> : IEntityTypeConfiguration<T> where T : BaseEntity
     {
         public virtual void Configure(EntityTypeBuilder<T> builder)
