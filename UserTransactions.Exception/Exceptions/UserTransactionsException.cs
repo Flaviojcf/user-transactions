@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace UserTransactions.Domain.Exceptions
+namespace UserTransactions.Exception.Exceptions
 {
     [ExcludeFromCodeCoverage]
     public class UserTransactionsException : SystemException

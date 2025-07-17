@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Backend\UserTransactions.Domain\UserTransactions.Domain.csproj" />
+    <ProjectReference Include="..\..\UserTransactions.Exception\UserTransactions.Exception.csproj" />
   </ItemGroup>
 
 </Project>
