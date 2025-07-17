@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Domain.Entities;
 using UserTransactions.Domain.Repositories.User;
 
 namespace UserTransactions.Infrastructure.Persistance.Repositories
 {
+    //Todo: Implementar testes unitários, fazendo in memory database para o DbContext e mockando o repositório.
+    [ExcludeFromCodeCoverage]
     public class UserRepository : IUserRepository
     {
         private readonly UserTransactionsDbContext _dbContext;
