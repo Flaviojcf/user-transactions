@@ -144,4 +144,10 @@
   <data name="InvalidCpfFormat" xml:space="preserve">
     <value>O formato do cpf é inválido.</value>
   </data>
+  <data name="EmailIsNotUnique" xml:space="preserve">
+    <value>O e-mail informado já foi registrado.</value>
+  </data>
+  <data name="CpfIsNotUnique" xml:space="preserve">
+    <value>O cpf informado já foi cadastrado.</value>
+  </data>
 </root>

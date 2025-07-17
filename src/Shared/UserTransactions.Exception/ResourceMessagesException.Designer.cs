@@ -61,11 +61,29 @@ namespace UserTransactions.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to O cpf informado já foi cadastrado..
+        /// </summary>
+        public static string CpfIsNotUnique {
+            get {
+                return ResourceManager.GetString("CpfIsNotUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O cpf é obrigatório..
         /// </summary>
         public static string CpfRequired {
             get {
                 return ResourceManager.GetString("CpfRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O e-mail informado já foi registrado..
+        /// </summary>
+        public static string EmailIsNotUnique {
+            get {
+                return ResourceManager.GetString("EmailIsNotUnique", resourceCulture);
             }
         }
         

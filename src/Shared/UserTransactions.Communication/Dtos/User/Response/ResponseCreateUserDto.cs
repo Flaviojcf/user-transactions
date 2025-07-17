@@ -1,4 +1,5 @@
-﻿namespace UserTransactions.Communication.Dtos.User.Response
+﻿
+namespace UserTransactions.Communication.Dtos.User.Response
 {
     public class ResponseCreateUserDto
     {

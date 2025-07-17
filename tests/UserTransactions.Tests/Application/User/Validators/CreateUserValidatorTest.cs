@@ -141,7 +141,6 @@ namespace UserTransactions.Tests.Application.User.Validators
             // Assert
             result.IsValid.Should().BeFalse();
             result.Errors.Should().Contain(error => error.ErrorMessage.Equals(ResourceMessagesException.InvalidPassword));
-
         }
     }
 }
