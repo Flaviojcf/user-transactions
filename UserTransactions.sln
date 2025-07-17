@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{DA3CBF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserTransactions.Exception", "src\Shared\UserTransactions.Exception\UserTransactions.Exception.csproj", "{1F2FDA40-562B-A422-DEFB-93A3F530F5CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserTransactions.Application", "UserTransactions.Application\UserTransactions.Application.csproj", "{5619CE86-7178-446B-8979-03FD421D0067}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{1F2FDA40-562B-A422-DEFB-93A3F530F5CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F2FDA40-562B-A422-DEFB-93A3F530F5CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F2FDA40-562B-A422-DEFB-93A3F530F5CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5619CE86-7178-446B-8979-03FD421D0067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5619CE86-7178-446B-8979-03FD421D0067}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5619CE86-7178-446B-8979-03FD421D0067}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5619CE86-7178-446B-8979-03FD421D0067}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,6 +57,7 @@ Global
 		{B0A7025A-645B-BC7E-F9EA-AF37B3BBAE52} = {8A690A6E-702E-4720-AA44-84303F727BDD}
 		{DA3CBFBB-B7E7-4312-BE72-C9DC6EA9F751} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{1F2FDA40-562B-A422-DEFB-93A3F530F5CD} = {DA3CBFBB-B7E7-4312-BE72-C9DC6EA9F751}
+		{5619CE86-7178-446B-8979-03FD421D0067} = {C00AD45B-1043-4F64-B855-66F69A1F6FF5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED4FD802-8543-4C57-9CC3-425427214562}
