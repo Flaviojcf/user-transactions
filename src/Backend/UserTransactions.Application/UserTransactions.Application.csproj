@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\UserTransactions.Exception\UserTransactions.Exception.csproj" />
-  </ItemGroup>
-
 </Project>
