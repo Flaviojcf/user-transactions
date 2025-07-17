@@ -1,4 +1,5 @@
-﻿using UserTransactions.Domain.Exceptions;
+﻿using UserTransactions.Exception;
+using UserTransactions.Exception.Exceptions;
 
 namespace UserTransactions.Domain.Entities
 {
@@ -10,10 +11,9 @@ namespace UserTransactions.Domain.Entities
             Balance = initialBalance;
         }
 
-        //Todo: Repassar mensagem para Designer
         public void Debit(decimal amount)
         {
-            if (Balance <= 0) throw new DomainException("Saldo insuficiente.");
+            if (Balance <= 0) throw new DomainException(ResourceMessagesException.SaldoInsuficiente);
         }
 
         public void Credit(decimal amount)

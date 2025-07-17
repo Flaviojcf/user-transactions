@@ -1,4 +1,4 @@
-﻿namespace UserTransactions.Domain.Exceptions
+﻿namespace UserTransactions.Exception.Exceptions
 {
     public class DomainException : UserTransactionsException
     {
