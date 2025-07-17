@@ -71,7 +71,7 @@ namespace UserTransactions.Tests.Domain.Entities
 
             // Assert
             action.Should().Throw<DomainException>()
-                .WithMessage(ResourceMessagesException.SaldoInsuficiente);
+                .WithMessage(ResourceMessagesException.InsufficientBalance);
         }
 
         [Fact]

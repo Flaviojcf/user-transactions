@@ -61,11 +61,83 @@ namespace UserTransactions.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to O cpf é obrigatório..
+        /// </summary>
+        public static string CpfRequired {
+            get {
+                return ResourceManager.GetString("CpfRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O Email é obrigatório..
+        /// </summary>
+        public static string EmailRequired {
+            get {
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O nome completo é obrigatório..
+        /// </summary>
+        public static string FullNameRequired {
+            get {
+                return ResourceManager.GetString("FullNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Saldo insuficiente..
         /// </summary>
-        public static string SaldoInsuficiente {
+        public static string InsufficientBalance {
             get {
-                return ResourceManager.GetString("SaldoInsuficiente", resourceCulture);
+                return ResourceManager.GetString("InsufficientBalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O formato do cpf é inválido..
+        /// </summary>
+        public static string InvalidCpfFormat {
+            get {
+                return ResourceManager.GetString("InvalidCpfFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O formato do e-mail é inválido..
+        /// </summary>
+        public static string InvalidEmailFormat {
+            get {
+                return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Senha inválida. É preciso ter mais de 6 caracteres..
+        /// </summary>
+        public static string InvalidPassword {
+            get {
+                return ResourceManager.GetString("InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O tipo de usuário informado é inválido..
+        /// </summary>
+        public static string InvalidUserType {
+            get {
+                return ResourceManager.GetString("InvalidUserType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A senha é obrigatória..
+        /// </summary>
+        public static string PasswordRequired {
+            get {
+                return ResourceManager.GetString("PasswordRequired", resourceCulture);
             }
         }
     }

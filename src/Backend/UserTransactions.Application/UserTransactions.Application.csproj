@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\UserTransactions.Communication\UserTransactions.Communication.csproj" />
+    <ProjectReference Include="..\UserTransactions.Domain\UserTransactions.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
