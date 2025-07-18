@@ -36,7 +36,7 @@ namespace UserTransactions.Tests.Application.User.UseCases
         }
 
         [Fact]
-        public async Task Given_ExistingEmail_When_ExecuteAsyncIsCalled_Then_ShouldThrowsErrorOnValidationException()
+        public async Task Given_ExistingEmail_When_ExecuteAsyncIsCalled_Then_ShouldThrowErrorOnValidationException()
         {
             // Arrange
             var request = RequestCreateUserDtoBuilder.Build();
@@ -50,7 +50,7 @@ namespace UserTransactions.Tests.Application.User.UseCases
         }
 
         [Fact]
-        public async Task Given_ExistingCpf_When_ExecuteAsyncIsCalled_Then_ShouldThrowsErrorOnValidationException()
+        public async Task Given_ExistingCpf_When_ExecuteAsyncIsCalled_Then_ShouldThrowErrorOnValidationException()
         {
             // Arrange
             var request = RequestCreateUserDtoBuilder.Build();

@@ -20,7 +20,7 @@ namespace UserTransactions.API.Filter
                 return;
             }
 
-            ThrowUnkowException(context);
+            ThrowUnknownException(context);
         }
 
         private static void HandleProjectException(ExceptionContext context)
@@ -36,7 +36,7 @@ namespace UserTransactions.API.Filter
 
         }
 
-        private static void ThrowUnkowException(ExceptionContext context)
+        private static void ThrowUnknownException(ExceptionContext context)
         {
             context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Result = new ObjectResult(new ResponseErrorDto(ResourceMessagesException.UnknownError, HttpStatusCode.InternalServerError));
