@@ -59,19 +59,43 @@ namespace UserTransactions.Tests.Domain.Entities
             walletEntity.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
 
-        [Fact]
-        public void Given_Wallet_When_DebitWithInsufficientBalance_ShouldThrowDomainException()
+        [Theory]
+        [InlineData(600)]
+        [InlineData(700)]
+        [InlineData(800)]
+        [InlineData(501)]
+        [InlineData(502)]
+        public void Given_Wallet_When_DebitWithInsufficientBalance_ShouldThrowDomainException(decimal amount)
         {
             // Arrange
             var wallet = WalletEntityBuilder.Build();
+            var user = UserEntityBuilder.BuildUser();
             var walletEntity = new WalletEntity(wallet.UserId);
+            walletEntity.SetUser(user);
 
             // Act
-            Action action = () => walletEntity.Debit(100);
+            Action action = () => walletEntity.Debit(amount);
 
             // Assert
             action.Should().Throw<DomainException>()
                 .WithMessage(ResourceMessagesException.InsufficientBalance);
+        }
+
+        [Fact]
+        public void Given_Wallet_When_UserTypeIsMerchant_ShouldThrowDomainException()
+        {
+            // Arrange
+            var wallet = WalletEntityBuilder.Build();
+            var user = UserEntityBuilder.BuildMerchant();
+            var walletEntity = new WalletEntity(wallet.UserId);
+            walletEntity.SetUser(user);
+
+            // Act
+            Action action = () => walletEntity.Debit(10);
+
+            // Assert
+            action.Should().Throw<DomainException>()
+                .WithMessage(ResourceMessagesException.MerchantCannotDebit);
         }
 
         [Fact]

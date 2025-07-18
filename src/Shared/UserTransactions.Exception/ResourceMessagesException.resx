@@ -165,4 +165,25 @@
   <data name="UserAlreadyHasWallet" xml:space="preserve">
     <value>O usuário informado já possui carteira vinculada.</value>
   </data>
+  <data name="TransactionAmountMustBeGreaterThanZero" xml:space="preserve">
+    <value>O valor da transação precisa ser maior que 0.</value>
+  </data>
+  <data name="SenderIdRequired" xml:space="preserve">
+    <value>O id do remetente é obrigatório.</value>
+  </data>
+  <data name="ReceiverIdRequired" xml:space="preserve">
+    <value>O id do recebedor é obrigatório.</value>
+  </data>
+  <data name="MerchantCannotDebit" xml:space="preserve">
+    <value>Transação não permitida. Lojistas só recebem transferências.</value>
+  </data>
+  <data name="WalletSenderNotFound" xml:space="preserve">
+    <value>A carteira do remetente não existe.</value>
+  </data>
+  <data name="WalletReceiverNotFound" xml:space="preserve">
+    <value>A carteira do recebedor não existe.</value>
+  </data>
+  <data name="SenderAndReceiverMustBeDifferent" xml:space="preserve">
+    <value>Não é possível fazer transação entre carteiras iguais.</value>
+  </data>
 </root>

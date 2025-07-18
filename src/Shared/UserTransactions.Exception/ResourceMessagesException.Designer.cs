@@ -151,11 +151,56 @@ namespace UserTransactions.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transação não permitida. Lojistas só recebem transferências..
+        /// </summary>
+        public static string MerchantCannotDebit {
+            get {
+                return ResourceManager.GetString("MerchantCannotDebit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A senha é obrigatória..
         /// </summary>
         public static string PasswordRequired {
             get {
                 return ResourceManager.GetString("PasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O id do recebedor é obrigatório..
+        /// </summary>
+        public static string ReceiverIdRequired {
+            get {
+                return ResourceManager.GetString("ReceiverIdRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Não é possível fazer transação entre carteiras iguais..
+        /// </summary>
+        public static string SenderAndReceiverMustBeDifferent {
+            get {
+                return ResourceManager.GetString("SenderAndReceiverMustBeDifferent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O id do remetente é obrigatório..
+        /// </summary>
+        public static string SenderIdRequired {
+            get {
+                return ResourceManager.GetString("SenderIdRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O valor da transação precisa ser maior que 0..
+        /// </summary>
+        public static string TransactionAmountMustBeGreaterThanZero {
+            get {
+                return ResourceManager.GetString("TransactionAmountMustBeGreaterThanZero", resourceCulture);
             }
         }
         
@@ -201,6 +246,24 @@ namespace UserTransactions.Exception {
         public static string UserNotRegistered {
             get {
                 return ResourceManager.GetString("UserNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A carteira do recebedor não existe..
+        /// </summary>
+        public static string WalletReceiverNotFound {
+            get {
+                return ResourceManager.GetString("WalletReceiverNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A carteira do remetente não existe..
+        /// </summary>
+        public static string WalletSenderNotFound {
+            get {
+                return ResourceManager.GetString("WalletSenderNotFound", resourceCulture);
             }
         }
     }

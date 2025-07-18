@@ -1,10 +1,10 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
-using UserTransactions.Application.UseCases.User.Create;
+using UserTransactions.Application.UseCases.Transaction.Create;
 using UserTransactions.Communication.Dtos.Errors.Response;
-using UserTransactions.Communication.Dtos.User.Request;
-using UserTransactions.Communication.Dtos.User.Response;
+using UserTransactions.Communication.Dtos.Transaction.Request;
+using UserTransactions.Communication.Dtos.Transaction.Response;
 
 namespace UserTransactions.API.Controllers.v1
 {
@@ -13,18 +13,17 @@ namespace UserTransactions.API.Controllers.v1
     [ApiVersion("1.0")]
     [Route("/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class TransactionController : ControllerBase
     {
         //TODO: Pesquisar como alterar o exemplo de retorno do swagger
         [HttpPost("register")]
-        [ProducesResponseType(typeof(ResponseCreateUserDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ResponseCreateTransactionDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorDto), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RegisterUser([FromBody] RequestCreateUserDto request, [FromServices] ICreateUserUseCase useCase)
+        public async Task<IActionResult> RegisterTransaction([FromBody] RequestCreateTransactionDto request, [FromServices] ICreateTransactionUseCase useCase)
         {
             var result = await useCase.ExecuteAsync(request);
 
-            return CreatedAtAction(nameof(RegisterUser), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(RegisterTransaction), new { id = result.Id }, result);
         }
-
     }
 }

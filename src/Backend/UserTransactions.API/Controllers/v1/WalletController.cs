@@ -19,7 +19,6 @@ namespace UserTransactions.API.Controllers.v1
         [HttpPost("register")]
         [ProducesResponseType(typeof(ResponseCreateWalletDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorDto), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResponseErrorDto), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterWallet([FromBody] RequestCreateWalletDto request, [FromServices] ICreateWalletUseCase useCase)
         {
             var result = await useCase.ExecuteAsync(request);

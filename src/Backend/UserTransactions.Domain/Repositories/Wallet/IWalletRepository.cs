@@ -6,5 +6,6 @@ namespace UserTransactions.Domain.Repositories.Wallet
     {
         Task AddAsync(WalletEntity wallet);
         Task<bool> ExistsByUserIdAsync(Guid userId);
+        Task<bool> ExistsByIdAsync(Guid id);
     }
 }

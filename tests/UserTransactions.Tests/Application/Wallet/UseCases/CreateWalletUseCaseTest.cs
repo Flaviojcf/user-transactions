@@ -37,7 +37,7 @@ namespace UserTransactions.Tests.Application.Wallet.UseCases
             result.Should().NotBeNull();
 
             result.Id.Should().NotBeEmpty();
-            result.Balance.Should().Be(0);
+            result.Balance.Should().Be(500);
 
             WalletRepositoryBuilder.VerifyAddAsyncWasCalled();
         }
