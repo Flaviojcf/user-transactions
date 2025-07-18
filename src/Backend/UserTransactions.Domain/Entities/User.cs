@@ -4,6 +4,8 @@ namespace UserTransactions.Domain.Entities
 {
     public sealed class User : BaseEntity
     {
+        private User() { }
+
         public User(string fullName, string email, string cpf, string password, UserType userType)
         {
             FullName = fullName;

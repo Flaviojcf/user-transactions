@@ -3,7 +3,7 @@ using UserTransactions.Exception.Exceptions;
 
 namespace UserTransactions.Domain.Entities
 {
-    public class Wallet : BaseEntity
+    public sealed class Wallet : BaseEntity
     {
         public Wallet(Guid userId, decimal initialBalance)
         {

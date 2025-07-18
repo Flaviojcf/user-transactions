@@ -12,7 +12,10 @@ namespace UserTransactions.Infrastructure.Persistance.Configuration
         {
             base.Configure(builder);
 
-            builder.ToTable("Users");
+            builder.ToTable("Users", t =>
+            {
+                t.HasCheckConstraint("CK_Users_UserType", "UserType IN ('User', 'Merchant')");
+            });
 
             builder.Property(u => u.FullName)
                 .IsRequired()

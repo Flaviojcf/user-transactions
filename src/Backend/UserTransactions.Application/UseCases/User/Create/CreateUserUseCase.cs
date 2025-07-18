@@ -2,6 +2,7 @@
 using UserTransactions.Communication.Dtos.User.Request;
 using UserTransactions.Communication.Dtos.User.Response;
 using UserTransactions.Domain.Repositories.User;
+using UserTransactions.Exception;
 using UserTransactions.Exception.Exceptions;
 using UserEntity = UserTransactions.Domain.Entities.User;
 
@@ -34,11 +35,11 @@ namespace UserTransactions.Application.UseCases.User.Create
         {
             var isEmailAlreadyRegistered = await _userRepository.IsEmailAlreadyRegistered(user.Email);
 
-            if (isEmailAlreadyRegistered) throw new EmailIsNotUniqueException();
+            if (isEmailAlreadyRegistered) throw new ErrorOnValidationException([ResourceMessagesException.EmailIsNotUnique]);
 
             var isCpfAlreadyRegistered = await _userRepository.IsCpfAlreadyRegistered(user.CPF);
 
-            if (isCpfAlreadyRegistered) throw new CpfIsNotUniqueException();
+            if (isCpfAlreadyRegistered) throw new ErrorOnValidationException([ResourceMessagesException.CpfIsNotUnique]);
         }
     }
 }

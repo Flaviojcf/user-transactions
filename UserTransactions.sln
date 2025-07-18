@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83A43365-DE0F-4FF9-83A8-AF420B505F45}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
@@ -28,6 +29,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserTransactions.Communication", "src\Shared\UserTransactions.Communication\UserTransactions.Communication.csproj", "{2B56147B-EE9B-06C6-F887-540957D517E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserTransactions.Infrastructure", "src\Backend\UserTransactions.Infrastructure\UserTransactions.Infrastructure.csproj", "{E9D69576-BC10-C769-6B8B-DA5981C773F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserTransactions.API", "src\Backend\UserTransactions.API\UserTransactions.API.csproj", "{46F5147B-D6CA-7659-A1B8-86A1CB6D529D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +62,10 @@ Global
 		{E9D69576-BC10-C769-6B8B-DA5981C773F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9D69576-BC10-C769-6B8B-DA5981C773F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9D69576-BC10-C769-6B8B-DA5981C773F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46F5147B-D6CA-7659-A1B8-86A1CB6D529D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46F5147B-D6CA-7659-A1B8-86A1CB6D529D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46F5147B-D6CA-7659-A1B8-86A1CB6D529D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46F5147B-D6CA-7659-A1B8-86A1CB6D529D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +79,7 @@ Global
 		{A390DDE6-6604-6DDE-218C-F46B20A80F6D} = {C00AD45B-1043-4F64-B855-66F69A1F6FF5}
 		{2B56147B-EE9B-06C6-F887-540957D517E3} = {DA3CBFBB-B7E7-4312-BE72-C9DC6EA9F751}
 		{E9D69576-BC10-C769-6B8B-DA5981C773F5} = {C00AD45B-1043-4F64-B855-66F69A1F6FF5}
+		{46F5147B-D6CA-7659-A1B8-86A1CB6D529D} = {C00AD45B-1043-4F64-B855-66F69A1F6FF5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED4FD802-8543-4C57-9CC3-425427214562}

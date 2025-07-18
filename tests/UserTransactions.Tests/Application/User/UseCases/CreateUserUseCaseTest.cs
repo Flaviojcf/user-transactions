@@ -36,7 +36,7 @@ namespace UserTransactions.Tests.Application.User.UseCases
         }
 
         [Fact]
-        public async Task Given_ExistingEmail_When_ExecuteAsyncIsCalled_Then_ShouldThrowEmailIsNotUniqueException()
+        public async Task Given_ExistingEmail_When_ExecuteAsyncIsCalled_Then_ShouldThrowsErrorOnValidationException()
         {
             // Arrange
             var request = RequestCreateUserDtoBuilder.Build();
@@ -46,11 +46,11 @@ namespace UserTransactions.Tests.Application.User.UseCases
             Func<Task> act = async () => await _sut.ExecuteAsync(request);
 
             // Assert
-            await act.Should().ThrowAsync<EmailIsNotUniqueException>();
+            await act.Should().ThrowAsync<ErrorOnValidationException>();
         }
 
         [Fact]
-        public async Task Given_ExistingCpf_When_ExecuteAsyncIsCalled_Then_ShouldThrowCpfIsNotUniqueException()
+        public async Task Given_ExistingCpf_When_ExecuteAsyncIsCalled_Then_ShouldThrowsErrorOnValidationException()
         {
             // Arrange
             var request = RequestCreateUserDtoBuilder.Build();
@@ -60,7 +60,7 @@ namespace UserTransactions.Tests.Application.User.UseCases
             Func<Task> act = async () => await _sut.ExecuteAsync(request);
 
             // Assert
-            await act.Should().ThrowAsync<CpfIsNotUniqueException>();
+            await act.Should().ThrowAsync<ErrorOnValidationException>();
         }
     }
 }

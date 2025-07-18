@@ -145,9 +145,15 @@
     <value>O formato do cpf é inválido.</value>
   </data>
   <data name="EmailIsNotUnique" xml:space="preserve">
-    <value>O e-mail informado já foi registrado.</value>
+    <value>O e-mail informado já foi cadastrado.</value>
   </data>
   <data name="CpfIsNotUnique" xml:space="preserve">
     <value>O cpf informado já foi cadastrado.</value>
+  </data>
+  <data name="TypeError" xml:space="preserve">
+    <value>https://httpstatuses.com/{0}</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Ocorreu um erro interno. Entre em contato com nossa equipe para mais informações. Visite: https://github.com/Flaviojcf</value>
   </data>
 </root>

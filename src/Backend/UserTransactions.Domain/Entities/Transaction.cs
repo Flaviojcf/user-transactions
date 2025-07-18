@@ -1,6 +1,6 @@
 ﻿namespace UserTransactions.Domain.Entities
 {
-    public class Transaction : BaseEntity
+    public sealed class Transaction : BaseEntity
     {
         public Transaction(Guid senderId, Guid receiverId, decimal amount)
         {
