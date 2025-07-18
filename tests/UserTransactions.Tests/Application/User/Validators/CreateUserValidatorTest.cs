@@ -2,7 +2,7 @@
 using UserTransactions.Application.UseCases.User.Create;
 using UserTransactions.Domain.Enum;
 using UserTransactions.Exception;
-using UserTransactions.Tests.Shared.Builders.Dtos.Request;
+using UserTransactions.Tests.Shared.Builders.Dtos.Request.User;
 
 namespace UserTransactions.Tests.Application.User.Validators
 {

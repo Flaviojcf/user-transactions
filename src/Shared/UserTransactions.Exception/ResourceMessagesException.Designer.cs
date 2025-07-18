@@ -176,5 +176,14 @@ namespace UserTransactions.Exception {
                 return ResourceManager.GetString("UnknownError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O id do usuário é obrigatório..
+        /// </summary>
+        public static string UserIdRequired {
+            get {
+                return ResourceManager.GetString("UserIdRequired", resourceCulture);
+            }
+        }
     }
 }

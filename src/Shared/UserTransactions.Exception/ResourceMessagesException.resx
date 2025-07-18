@@ -156,4 +156,7 @@
   <data name="UnknownError" xml:space="preserve">
     <value>Ocorreu um erro interno. Entre em contato com nossa equipe para mais informações. Visite: https://github.com/Flaviojcf</value>
   </data>
+  <data name="UserIdRequired" xml:space="preserve">
+    <value>O id do usuário é obrigatório.</value>
+  </data>
 </root>

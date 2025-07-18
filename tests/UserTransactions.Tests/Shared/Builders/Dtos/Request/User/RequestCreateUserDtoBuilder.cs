@@ -3,7 +3,7 @@ using Bogus.Extensions.Brazil;
 using UserTransactions.Communication.Dtos.User.Request;
 using UserTransactions.Domain.Enum;
 
-namespace UserTransactions.Tests.Shared.Builders.Dtos.Request
+namespace UserTransactions.Tests.Shared.Builders.Dtos.Request.User
 {
     public static class RequestCreateUserDtoBuilder
     {
