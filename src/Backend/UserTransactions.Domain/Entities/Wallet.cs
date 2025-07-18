@@ -1,4 +1,5 @@
-﻿using UserTransactions.Exception;
+﻿using UserTransactions.Domain.Enum;
+using UserTransactions.Exception;
 using UserTransactions.Exception.Exceptions;
 
 namespace UserTransactions.Domain.Entities
@@ -13,6 +14,7 @@ namespace UserTransactions.Domain.Entities
 
         public void Debit(decimal amount)
         {
+            if (User!.UserType.Equals(UserType.Merchant)) throw new DomainException(ResourceMessagesException.MerchantCannotDebit);
             if (Balance <= 0) throw new DomainException(ResourceMessagesException.InsufficientBalance);
         }
 

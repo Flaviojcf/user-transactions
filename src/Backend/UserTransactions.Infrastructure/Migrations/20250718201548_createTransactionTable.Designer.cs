@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserTransactions.Infrastructure.Persistance;
 
 #nullable disable
 
-namespace UserTransactions.Infrastructure.Migrations1
+namespace UserTransactions.Infrastructure.Migrations
 {
     [DbContext(typeof(UserTransactionsDbContext))]
-    partial class UserTransactionsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250718201548_createTransactionTable")]
+    partial class createTransactionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using UserTransactions.Application.UseCases.Transaction.Create;
 using UserTransactions.Application.UseCases.User.Create;
 using UserTransactions.Application.UseCases.Wallet.Create;
 using UserTransactions.Communication.Dtos.Errors.Response;
@@ -23,6 +24,7 @@ namespace UserTransactions.Application.DI
         {
             services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
             services.AddScoped<ICreateWalletUseCase, CreateWalletUseCase>();
+            services.AddScoped<ICreateTransactionUseCase, CreateTransactionUseCase>();
         }
 
         private static void AddValidation(this IServiceCollection services)

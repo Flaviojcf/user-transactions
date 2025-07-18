@@ -29,5 +29,10 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
         {
             _mock.Verify(x => x.AddAsync(It.IsAny<WalletEntity>()));
         }
+
+        public static void SetupExistsByIdAsync(Guid id, bool exists)
+        {
+            _mock.Setup(x => x.ExistsByIdAsync(id)).ReturnsAsync(exists);
+        }
     }
 }
