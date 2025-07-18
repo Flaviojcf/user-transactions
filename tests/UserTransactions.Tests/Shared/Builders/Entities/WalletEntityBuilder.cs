@@ -7,7 +7,7 @@ namespace UserTransactions.Tests.Shared.Builders.Entities
     {
         public static Wallet Build()
         {
-            return new Faker<Wallet>().CustomInstantiator(faker => new Wallet(Guid.NewGuid(), faker.Random.Decimal())).Generate();
+            return new Faker<Wallet>().CustomInstantiator(faker => new Wallet(Guid.NewGuid())).Generate();
         }
     }
 }

@@ -5,10 +5,10 @@ namespace UserTransactions.Domain.Entities
 {
     public sealed class Wallet : BaseEntity
     {
-        public Wallet(Guid userId, decimal initialBalance)
+        public Wallet(Guid userId)
         {
             UserId = userId;
-            Balance = initialBalance;
+            Balance = 0;
         }
 
         public void Debit(decimal amount)

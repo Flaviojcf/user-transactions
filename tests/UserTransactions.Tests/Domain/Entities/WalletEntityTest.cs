@@ -15,7 +15,7 @@ namespace UserTransactions.Tests.Domain.Entities
             var wallet = WalletEntityBuilder.Build();
 
             // Act
-            var walletEntity = new WalletEntity(wallet.UserId, wallet.Balance);
+            var walletEntity = new WalletEntity(wallet.UserId);
 
             // Assert
             walletEntity.Should().NotBeNull();
@@ -34,7 +34,7 @@ namespace UserTransactions.Tests.Domain.Entities
         {
             // Arrange
             var wallet = WalletEntityBuilder.Build();
-            var walletEntity = new WalletEntity(wallet.UserId, wallet.Balance);
+            var walletEntity = new WalletEntity(wallet.UserId);
 
             // Act
             walletEntity.Activate();
@@ -49,7 +49,7 @@ namespace UserTransactions.Tests.Domain.Entities
         {
             // Arrange
             var wallet = WalletEntityBuilder.Build();
-            var walletEntity = new WalletEntity(wallet.UserId, wallet.Balance);
+            var walletEntity = new WalletEntity(wallet.UserId);
 
             // Act
             walletEntity.Deactivate();
@@ -64,7 +64,7 @@ namespace UserTransactions.Tests.Domain.Entities
         {
             // Arrange
             var wallet = WalletEntityBuilder.Build();
-            var walletEntity = new WalletEntity(wallet.UserId, 0);
+            var walletEntity = new WalletEntity(wallet.UserId);
 
             // Act
             Action action = () => walletEntity.Debit(100);
@@ -79,7 +79,7 @@ namespace UserTransactions.Tests.Domain.Entities
         {
             // Arrange
             var wallet = WalletEntityBuilder.Build();
-            var walletEntity = new WalletEntity(wallet.UserId, wallet.Balance);
+            var walletEntity = new WalletEntity(wallet.UserId);
 
             // Act
             walletEntity.Credit(100);

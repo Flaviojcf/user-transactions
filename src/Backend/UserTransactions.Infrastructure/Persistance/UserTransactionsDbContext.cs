@@ -11,6 +11,7 @@ namespace UserTransactions.Infrastructure.Persistance
         public UserTransactionsDbContext(DbContextOptions<UserTransactionsDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

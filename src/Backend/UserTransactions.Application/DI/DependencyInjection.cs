@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using UserTransactions.Application.UseCases.User.Create;
+using UserTransactions.Application.UseCases.Wallet.Create;
 using UserTransactions.Communication.Dtos.Errors.Response;
 
 namespace UserTransactions.Application.DI
@@ -21,6 +22,7 @@ namespace UserTransactions.Application.DI
         public static void AddUseCases(this IServiceCollection services)
         {
             services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
+            services.AddScoped<ICreateWalletUseCase, CreateWalletUseCase>();
         }
 
         private static void AddValidation(this IServiceCollection services)

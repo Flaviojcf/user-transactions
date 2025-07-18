@@ -2,7 +2,7 @@
 using UserTransactions.Application.UseCases.User.Create;
 using UserTransactions.Domain.Repositories.User;
 using UserTransactions.Exception.Exceptions;
-using UserTransactions.Tests.Shared.Builders.Dtos.Request;
+using UserTransactions.Tests.Shared.Builders.Dtos.Request.User;
 using UserTransactions.Tests.Shared.Builders.Repositories;
 
 namespace UserTransactions.Tests.Application.User.UseCases
@@ -10,7 +10,7 @@ namespace UserTransactions.Tests.Application.User.UseCases
     public class CreateUserUseCaseTest
     {
         private readonly IUserRepository _userRepository;
-        private readonly CreateUserUseCase _sut;
+        private readonly ICreateUserUseCase _sut;
 
         public CreateUserUseCaseTest()
         {
