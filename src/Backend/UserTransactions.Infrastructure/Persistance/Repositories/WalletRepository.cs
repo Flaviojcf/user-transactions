@@ -33,5 +33,19 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
             return await _dbContext.Wallets
                 .AnyAsync(w => w.Id == id && w.IsActive);
         }
+
+        public async Task<Wallet?> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.Wallets
+                .Include(w => w.User)
+                .FirstOrDefaultAsync(w => w.Id == id);
+        }
+
+        public async Task UpdateAsync(Wallet wallet)
+        {
+            _dbContext.Wallets.Update(wallet);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using UserTransactions.Application.UseCases.Transaction.Create;
+using UserTransactions.Domain.Repositories;
 using UserTransactions.Domain.Repositories.Transaction;
 using UserTransactions.Domain.Repositories.Wallet;
 using UserTransactions.Exception.Exceptions;
 using UserTransactions.Tests.Shared.Builders.Dtos.Request.Transactions;
+using UserTransactions.Tests.Shared.Builders.Entities;
 using UserTransactions.Tests.Shared.Builders.Repositories;
 
 namespace UserTransactions.Tests.Application.Transactions.UseCases
@@ -12,13 +14,15 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly IWalletRepository _walletRepository;
+        private readonly IUnitOfWorkRepository _unitOfWorkRepository;
         private readonly ICreateTransactionUseCase _sut;
 
         public CreateTransactionUseCaseTest()
         {
             _transactionRepository = TransactionRepositoryBuilder.Build();
             _walletRepository = WalletRepositoryBuilder.Build();
-            _sut = new CreateTransactionUseCase(_transactionRepository, _walletRepository);
+            _unitOfWorkRepository = UnitOfWorkRepositoryBuilder.Build();
+            _sut = new CreateTransactionUseCase(_transactionRepository, _walletRepository, _unitOfWorkRepository);
         }
 
         [Fact]
@@ -26,8 +30,19 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
         {
             // Arrange
             var request = RequestCreateTransactionDtoBuilder.Build();
-            WalletRepositoryBuilder.SetupExistsByIdAsync(request.SenderId, true);
-            WalletRepositoryBuilder.SetupExistsByIdAsync(request.ReceiverId, true);
+            var senderUser = UserEntityBuilder.BuildUser();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+            WalletRepositoryBuilder.SetupUpdateAsync();
+            TransactionRepositoryBuilder.SetupAddAsync();
+            UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
 
             // Act
             var result = await _sut.ExecuteAsync(request);
@@ -37,6 +52,132 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
 
             result.Id.Should().NotBeEmpty();
             result.Amount.Should().Be(request.Amount);
+        }
+
+        [Fact]
+        public async Task Given_ValidTransaction_When_ExecuteAsyncIsCalled_Then_SenderBalanceShouldBeDebited()
+        {
+            // Arrange
+            var request = RequestCreateTransactionDtoBuilder.Build();
+            var senderUser = UserEntityBuilder.BuildUser();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            var initialSenderBalance = senderWallet.Balance;
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+            WalletRepositoryBuilder.SetupUpdateAsync();
+            TransactionRepositoryBuilder.SetupAddAsync();
+            UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            // Act
+            await _sut.ExecuteAsync(request);
+
+            // Assert
+            senderWallet.Balance.Should().Be(initialSenderBalance - request.Amount);
+        }
+
+        [Fact]
+        public async Task Given_ValidTransaction_When_ExecuteAsyncIsCalled_Then_ReceiverBalanceShouldBeCredited()
+        {
+            // Arrange
+            var request = RequestCreateTransactionDtoBuilder.Build();
+            var senderUser = UserEntityBuilder.BuildUser();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            var initialReceiverBalance = receiverWallet.Balance;
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+            WalletRepositoryBuilder.SetupUpdateAsync();
+            TransactionRepositoryBuilder.SetupAddAsync();
+            UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            // Act
+            await _sut.ExecuteAsync(request);
+
+            // Assert
+            receiverWallet.Balance.Should().Be(initialReceiverBalance + request.Amount);
+        }
+
+        [Fact]
+        public async Task Given_ValidTransaction_When_ExecuteAsyncIsCalled_Then_BothWalletsBalancesShouldBeUpdatedCorrectly()
+        {
+            // Arrange
+            var request = RequestCreateTransactionDtoBuilder.Build();
+            var senderUser = UserEntityBuilder.BuildUser();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            var initialSenderBalance = senderWallet.Balance;
+            var initialReceiverBalance = receiverWallet.Balance;
+            var totalInitialBalance = initialSenderBalance + initialReceiverBalance;
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+            WalletRepositoryBuilder.SetupUpdateAsync();
+            TransactionRepositoryBuilder.SetupAddAsync();
+            UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            // Act
+            await _sut.ExecuteAsync(request);
+
+            // Assert
+            senderWallet.Balance.Should().Be(initialSenderBalance - request.Amount);
+            receiverWallet.Balance.Should().Be(initialReceiverBalance + request.Amount);
+
+            var totalFinalBalance = senderWallet.Balance + receiverWallet.Balance;
+            totalFinalBalance.Should().Be(totalInitialBalance);
+        }
+
+        [Theory]
+        [InlineData(50)]
+        [InlineData(100)]
+        [InlineData(250)]
+        [InlineData(499)]
+        public async Task Given_ValidTransactionWithSpecificAmount_When_ExecuteAsyncIsCalled_Then_BalancesShouldBeUpdatedWithCorrectAmount(decimal transactionAmount)
+        {
+            // Arrange
+            var request = RequestCreateTransactionDtoBuilder.Build();
+            request.Amount = transactionAmount;
+
+            var senderUser = UserEntityBuilder.BuildUser();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            var initialSenderBalance = senderWallet.Balance;
+            var initialReceiverBalance = receiverWallet.Balance;
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+            WalletRepositoryBuilder.SetupUpdateAsync();
+            TransactionRepositoryBuilder.SetupAddAsync();
+            UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            // Act
+            await _sut.ExecuteAsync(request);
+
+            // Assert
+            senderWallet.Balance.Should().Be(initialSenderBalance - transactionAmount);
+            receiverWallet.Balance.Should().Be(initialReceiverBalance + transactionAmount);
         }
 
         [Fact]
@@ -67,6 +208,29 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
 
             // Assert
             await act.Should().ThrowAsync<ErrorOnValidationException>();
+        }
+
+        [Fact]
+        public async Task Given_SenderUserTypeIsMerchant_When_ExecuteAsyncIsCalled_Then_ShouldThrowDomainException()
+        {
+            // Arrange
+            var request = RequestCreateTransactionDtoBuilder.Build();
+            var senderUser = UserEntityBuilder.BuildMerchant();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+
+            // Act
+            Func<Task> act = async () => await _sut.ExecuteAsync(request);
+
+            // Assert
+            await act.Should().ThrowAsync<DomainException>();
         }
     }
 }
