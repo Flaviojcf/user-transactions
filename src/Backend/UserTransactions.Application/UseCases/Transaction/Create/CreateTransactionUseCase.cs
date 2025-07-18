@@ -18,12 +18,14 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
         private readonly ITransactionRepository _transactionRepository;
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWorkRepository _unitOfWork;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork)
+        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IHttpClientFactory httpClientFactory)
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
             _unitOfWork = unitOfWork;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<ResponseCreateTransactionDto> ExecuteAsync(RequestCreateTransactionDto request)
@@ -43,6 +45,8 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
                 await _walletRepository.UpdateAsync(senderWallet);
                 await _walletRepository.UpdateAsync(receiverWallet);
                 await _transactionRepository.AddAsync(transaction);
+                await ValidateAuthorizeService();
+
                 await _unitOfWork.CommitAsync();
 
                 return transaction.MapFromTransaction();
@@ -74,9 +78,16 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
         }
 
 
-        //private async Task ValidateAuthorizeService()
-        //{
+        private async Task ValidateAuthorizeService()
+        {
+            using var httpClient = _httpClientFactory.CreateClient();
 
-        //}
+            var response = await httpClient.GetAsync("https://util.devi.tools/api/v2/authorize");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ErrorOnValidationException([ResourceMessagesException.TransactionNotAuthorized]);
+            }
+        }
     }
 }

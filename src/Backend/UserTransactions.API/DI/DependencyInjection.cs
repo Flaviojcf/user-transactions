@@ -16,6 +16,7 @@ namespace UserTransactions.API.DI
             services.AddHealthChecks();
             services.AddLowerCaseUrl();
             services.AddFilters();
+            services.AddHttp();
         }
 
         public static void AddVersioning(this IServiceCollection services)
@@ -44,7 +45,7 @@ namespace UserTransactions.API.DI
             });
         }
 
-        private static void AddLowerCaseUrl(this IServiceCollection services)
+        public static void AddLowerCaseUrl(this IServiceCollection services)
         {
             services.AddRouting(options =>
             {
@@ -52,7 +53,7 @@ namespace UserTransactions.API.DI
             });
         }
 
-        private static void AddFilters(this IServiceCollection services)
+        public static void AddFilters(this IServiceCollection services)
         {
             services.AddMvc(options =>
             {
@@ -60,6 +61,11 @@ namespace UserTransactions.API.DI
                 options.Filters.Add<ExceptionFilter>();
             });
 
+        }
+
+        public static void AddHttp(this IServiceCollection services)
+        {
+            services.AddHttpClient();
         }
     }
 }

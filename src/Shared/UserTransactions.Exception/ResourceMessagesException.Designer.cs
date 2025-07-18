@@ -205,6 +205,15 @@ namespace UserTransactions.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A transação não foi autorizada pelo autorizador: https://util.devi.tools/api/v2/authorize .
+        /// </summary>
+        public static string TransactionNotAuthorized {
+            get {
+                return ResourceManager.GetString("TransactionNotAuthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://httpstatuses.com/{0}.
         /// </summary>
         public static string TypeError {
