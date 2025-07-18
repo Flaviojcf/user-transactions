@@ -6,9 +6,9 @@ using UserTransactions.Infrastructure.DI;
 
 namespace UserTransactions.API
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
-        [ExcludeFromCodeCoverage]
         protected Program() { }
 
         public static void Main(string[] args)
