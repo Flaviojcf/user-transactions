@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.API.Filter;
+using UserTransactions.Domain.Services.Messaging;
+using UserTransactions.Infrastructure.Configuration;
 using UserTransactions.Infrastructure.Persistance;
+using UserTransactions.Infrastructure.Services.Messaging;
 
 namespace UserTransactions.API.DI
 {
@@ -17,6 +20,7 @@ namespace UserTransactions.API.DI
             services.AddLowerCaseUrl();
             services.AddFilters();
             services.AddHttp();
+            services.AddKafka(configuration);
         }
 
         public static void AddVersioning(this IServiceCollection services)
@@ -66,6 +70,13 @@ namespace UserTransactions.API.DI
         public static void AddHttp(this IServiceCollection services)
         {
             services.AddHttpClient();
+        }
+
+        public static void AddKafka(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<KafkaOptions>(configuration.GetSection(KafkaOptions.SectionName));
+            services.AddSingleton<KafkaProducerFactory>();
+            services.AddScoped<IKafkaMessagePublisher, KafkaMessagePublisher>();
         }
     }
 }

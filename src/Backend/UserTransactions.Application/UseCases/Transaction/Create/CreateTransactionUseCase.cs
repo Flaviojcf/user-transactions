@@ -4,6 +4,7 @@ using UserTransactions.Communication.Dtos.Transaction.Response;
 using UserTransactions.Domain.Repositories;
 using UserTransactions.Domain.Repositories.Transaction;
 using UserTransactions.Domain.Repositories.Wallet;
+using UserTransactions.Domain.Services.Messaging;
 using UserTransactions.Exception;
 using UserTransactions.Exception.Exceptions;
 using TransactionEntity = UserTransactions.Domain.Entities.Transaction;
@@ -19,13 +20,15 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IKafkaMessagePublisher _messagePublisher;
 
-        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IHttpClientFactory httpClientFactory)
+        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IHttpClientFactory httpClientFactory, IKafkaMessagePublisher messagePublisher)
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
             _unitOfWork = unitOfWork;
             _httpClientFactory = httpClientFactory;
+            _messagePublisher = messagePublisher;
         }
 
         public async Task<ResponseCreateTransactionDto> ExecuteAsync(RequestCreateTransactionDto request)
@@ -48,6 +51,15 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
                 await ValidateAuthorizeService();
 
                 await _unitOfWork.CommitAsync();
+
+                await _messagePublisher.PublishAsync("transaction-created", new
+                {
+                    TransactionId = transaction.Id,
+                    Amount = transaction.Amount,
+                    SenderId = transaction.SenderId,
+                    ReceiverId = transaction.ReceiverId,
+                    CreatedAt = DateTime.UtcNow
+                });
 
                 return transaction.MapFromTransaction();
             }
