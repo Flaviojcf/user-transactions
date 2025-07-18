@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Application.UseCases.User.Create;
 using UserTransactions.Communication.Dtos.Errors.Response;
 using UserTransactions.Communication.Dtos.User.Request;
@@ -7,6 +8,8 @@ using UserTransactions.Communication.Dtos.User.Response;
 
 namespace UserTransactions.API.Controllers.v1
 {
+    //TODO: Criar teste de integração para o controller
+    [ExcludeFromCodeCoverage]
     [ApiVersion("1.0")]
     [Route("/v{version:apiVersion}/[controller]")]
     [ApiController]
