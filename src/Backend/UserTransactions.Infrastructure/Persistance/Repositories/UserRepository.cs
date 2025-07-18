@@ -31,5 +31,10 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
         {
             return await _dbContext.Users.AnyAsync(u => u.Email == email);
         }
+
+        public async Task<bool> ExistsAndIsActiveAsync(Guid userId)
+        {
+            return await _dbContext.Users.AnyAsync(u => u.Id == userId && u.IsActive);
+        }
     }
 }

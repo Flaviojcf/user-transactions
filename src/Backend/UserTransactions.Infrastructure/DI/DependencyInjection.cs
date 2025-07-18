@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Domain.Repositories.User;
+using UserTransactions.Domain.Repositories.Wallet;
 using UserTransactions.Infrastructure.Persistance.Repositories;
 
 namespace UserTransactions.Infrastructure.DI
@@ -16,6 +17,7 @@ namespace UserTransactions.Infrastructure.DI
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
         }
     }
 }

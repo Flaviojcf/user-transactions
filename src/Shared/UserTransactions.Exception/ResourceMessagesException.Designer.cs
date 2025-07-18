@@ -178,11 +178,29 @@ namespace UserTransactions.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to O usuário informado já possui carteira vinculada..
+        /// </summary>
+        public static string UserAlreadyHasWallet {
+            get {
+                return ResourceManager.GetString("UserAlreadyHasWallet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O id do usuário é obrigatório..
         /// </summary>
         public static string UserIdRequired {
             get {
                 return ResourceManager.GetString("UserIdRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O usuário informado não está cadastrado..
+        /// </summary>
+        public static string UserNotRegistered {
+            get {
+                return ResourceManager.GetString("UserNotRegistered", resourceCulture);
             }
         }
     }
