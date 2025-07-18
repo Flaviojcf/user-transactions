@@ -9,18 +9,23 @@ namespace UserTransactions.Domain.Entities
         public Wallet(Guid userId)
         {
             UserId = userId;
-            Balance = 0;
+            Balance = 500;
         }
 
         public void Debit(decimal amount)
         {
             if (User!.UserType.Equals(UserType.Merchant)) throw new DomainException(ResourceMessagesException.MerchantCannotDebit);
-            if (Balance <= 0) throw new DomainException(ResourceMessagesException.InsufficientBalance);
+            if (amount >= Balance) throw new DomainException(ResourceMessagesException.InsufficientBalance);
         }
 
         public void Credit(decimal amount)
         {
             Balance += amount;
+        }
+
+        public void SetUser(User user)
+        {
+            User = user;
         }
 
         public decimal Balance { get; private set; }
