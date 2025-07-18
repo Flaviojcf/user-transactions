@@ -79,7 +79,7 @@ namespace UserTransactions.Exception {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O e-mail informado já foi registrado..
+        ///   Looks up a localized string similar to O e-mail informado já foi cadastrado..
         /// </summary>
         public static string EmailIsNotUnique {
             get {
@@ -156,6 +156,24 @@ namespace UserTransactions.Exception {
         public static string PasswordRequired {
             get {
                 return ResourceManager.GetString("PasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://httpstatuses.com/{0}.
+        /// </summary>
+        public static string TypeError {
+            get {
+                return ResourceManager.GetString("TypeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ocorreu um erro interno. Entre em contato com nossa equipe para mais informações. Visite: https://github.com/Flaviojcf.
+        /// </summary>
+        public static string UnknownError {
+            get {
+                return ResourceManager.GetString("UnknownError", resourceCulture);
             }
         }
     }

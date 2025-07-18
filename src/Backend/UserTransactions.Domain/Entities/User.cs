@@ -1,9 +1,13 @@
-﻿using UserTransactions.Domain.Enum;
+﻿using System.Diagnostics.CodeAnalysis;
+using UserTransactions.Domain.Enum;
 
 namespace UserTransactions.Domain.Entities
 {
     public sealed class User : BaseEntity
     {
+        [ExcludeFromCodeCoverage]
+        private User() { }
+
         public User(string fullName, string email, string cpf, string password, UserType userType)
         {
             FullName = fullName;
