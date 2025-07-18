@@ -10,6 +10,7 @@ using TransactionEntity = UserTransactions.Domain.Entities.Transaction;
 
 namespace UserTransactions.Application.UseCases.Transaction.Create
 {
+    //TODO: Criar teses unitários para conferir saldo após as transações
     public class CreateTransactionUseCase : ICreateTransactionUseCase
     {
         private readonly ITransactionRepository _transactionRepository;
