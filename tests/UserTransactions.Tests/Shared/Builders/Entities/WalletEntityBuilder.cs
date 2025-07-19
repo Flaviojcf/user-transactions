@@ -7,7 +7,17 @@ namespace UserTransactions.Tests.Shared.Builders.Entities
     {
         public static Wallet Build()
         {
-            return new Faker<Wallet>().CustomInstantiator(faker => new Wallet(Guid.NewGuid())).Generate();
+            var wallet = new Faker<Wallet>().CustomInstantiator(faker => new Wallet(Guid.NewGuid())).Generate();
+            var user = UserEntityBuilder.BuildUser();
+            wallet.SetUser(user);
+            return wallet;
+        }
+
+        public static Wallet BuildWithUser(User user)
+        {
+            var wallet = new Faker<Wallet>().CustomInstantiator(faker => new Wallet(user.Id)).Generate();
+            wallet.SetUser(user);
+            return wallet;
         }
     }
 }

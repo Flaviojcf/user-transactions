@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.API.Filter;
+using UserTransactions.Domain.Services.Messaging;
+using UserTransactions.Infrastructure.Configuration;
 using UserTransactions.Infrastructure.Persistance;
+using UserTransactions.Infrastructure.Services.Messaging;
 
 namespace UserTransactions.API.DI
 {
@@ -16,6 +19,8 @@ namespace UserTransactions.API.DI
             services.AddHealthChecks();
             services.AddLowerCaseUrl();
             services.AddFilters();
+            services.AddHttp();
+            services.AddKafka(configuration);
         }
 
         public static void AddVersioning(this IServiceCollection services)
@@ -44,7 +49,7 @@ namespace UserTransactions.API.DI
             });
         }
 
-        private static void AddLowerCaseUrl(this IServiceCollection services)
+        public static void AddLowerCaseUrl(this IServiceCollection services)
         {
             services.AddRouting(options =>
             {
@@ -52,7 +57,7 @@ namespace UserTransactions.API.DI
             });
         }
 
-        private static void AddFilters(this IServiceCollection services)
+        public static void AddFilters(this IServiceCollection services)
         {
             services.AddMvc(options =>
             {
@@ -60,6 +65,18 @@ namespace UserTransactions.API.DI
                 options.Filters.Add<ExceptionFilter>();
             });
 
+        }
+
+        public static void AddHttp(this IServiceCollection services)
+        {
+            services.AddHttpClient();
+        }
+
+        public static void AddKafka(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<KafkaOptions>(configuration.GetSection(KafkaOptions.SectionName));
+            services.AddSingleton<KafkaProducerFactory>();
+            services.AddScoped<IKafkaMessageProducer, KafkaMessageProducer>();
         }
     }
 }

@@ -15,12 +15,16 @@ namespace UserTransactions.Domain.Entities
         public void Debit(decimal amount)
         {
             if (User!.UserType.Equals(UserType.Merchant)) throw new DomainException(ResourceMessagesException.MerchantCannotDebit);
-            if (amount >= Balance) throw new DomainException(ResourceMessagesException.InsufficientBalance);
+            if (amount > Balance) throw new DomainException(ResourceMessagesException.InsufficientBalance);
+
+            Balance -= amount;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void Credit(decimal amount)
         {
             Balance += amount;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetUser(User user)

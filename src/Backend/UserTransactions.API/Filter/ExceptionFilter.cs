@@ -34,6 +34,14 @@ namespace UserTransactions.API.Filter
                 return;
             }
 
+            if (context.Exception is DomainException domainException)
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                context.Result = new BadRequestObjectResult(new ResponseErrorDto(domainException.Message, HttpStatusCode.BadRequest));
+
+                return;
+            }
         }
 
         private static void ThrowUnknownException(ExceptionContext context)

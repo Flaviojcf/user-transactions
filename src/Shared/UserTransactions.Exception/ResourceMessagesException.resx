@@ -186,4 +186,7 @@
   <data name="SenderAndReceiverMustBeDifferent" xml:space="preserve">
     <value>Não é possível fazer transação entre carteiras iguais.</value>
   </data>
+  <data name="TransactionNotAuthorized" xml:space="preserve">
+    <value>A transação não foi autorizada pelo autorizador: https://util.devi.tools/api/v2/authorize </value>
+  </data>
 </root>
