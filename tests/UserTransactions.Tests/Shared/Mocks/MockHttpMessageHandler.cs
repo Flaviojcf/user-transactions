@@ -13,7 +13,7 @@ namespace UserTransactions.Tests.Shared.Mocks
 
         public void SetupFailureResponse()
         {
-            _statusCode = HttpStatusCode.Unauthorized;
+            _statusCode = HttpStatusCode.Forbidden;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
