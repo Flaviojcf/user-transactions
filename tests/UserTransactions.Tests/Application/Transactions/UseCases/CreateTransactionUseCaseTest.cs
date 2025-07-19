@@ -3,10 +3,12 @@ using UserTransactions.Application.UseCases.Transaction.Create;
 using UserTransactions.Domain.Repositories;
 using UserTransactions.Domain.Repositories.Transaction;
 using UserTransactions.Domain.Repositories.Wallet;
+using UserTransactions.Domain.Services.Messaging;
 using UserTransactions.Exception.Exceptions;
 using UserTransactions.Tests.Shared.Builders.Dtos.Request.Transactions;
 using UserTransactions.Tests.Shared.Builders.Entities;
 using UserTransactions.Tests.Shared.Builders.Repositories;
+using UserTransactions.Tests.Shared.Mocks;
 
 namespace UserTransactions.Tests.Application.Transactions.UseCases
 {
@@ -15,6 +17,9 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
         private readonly ITransactionRepository _transactionRepository;
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
+        private readonly IKafkaMessageProducer _messageProducer;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _defaultHttpClient;
         private readonly ICreateTransactionUseCase _sut;
 
         public CreateTransactionUseCaseTest()
@@ -22,7 +27,11 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             _transactionRepository = TransactionRepositoryBuilder.Build();
             _walletRepository = WalletRepositoryBuilder.Build();
             _unitOfWorkRepository = UnitOfWorkRepositoryBuilder.Build();
-            _sut = new CreateTransactionUseCase(_transactionRepository, _walletRepository, _unitOfWorkRepository);
+            _messageProducer = KafkaMessageProducerBuilder.Build();
+            _httpClientFactory = HttpClientFactoryBuilder.Build();
+            _defaultHttpClient = CreateSuccessHttpClient();
+            HttpClientFactoryBuilder.SetupCreateClient(_defaultHttpClient);
+            _sut = new CreateTransactionUseCase(_transactionRepository, _walletRepository, _unitOfWorkRepository, _httpClientFactory, _messageProducer);
         }
 
         [Fact]
@@ -44,12 +53,13 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
 
+            KafkaMessageProducerBuilder.SetupPublishAsync<object>();
+
             // Act
             var result = await _sut.ExecuteAsync(request);
 
             // Assert
             result.Should().NotBeNull();
-
             result.Id.Should().NotBeEmpty();
             result.Amount.Should().Be(request.Amount);
         }
@@ -74,6 +84,8 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            KafkaMessageProducerBuilder.SetupPublishAsync<object>();
 
             // Act
             await _sut.ExecuteAsync(request);
@@ -102,6 +114,8 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            KafkaMessageProducerBuilder.SetupPublishAsync<object>();
 
             // Act
             await _sut.ExecuteAsync(request);
@@ -132,6 +146,8 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            KafkaMessageProducerBuilder.SetupPublishAsync<object>();
 
             // Act
             await _sut.ExecuteAsync(request);
@@ -172,6 +188,8 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
 
+            KafkaMessageProducerBuilder.SetupPublishAsync<object>();
+
             // Act
             await _sut.ExecuteAsync(request);
 
@@ -185,8 +203,7 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
         {
             // Arrange
             var request = RequestCreateTransactionDtoBuilder.Build();
-            WalletRepositoryBuilder.SetupExistsByIdAsync(request.SenderId, false);
-            WalletRepositoryBuilder.SetupExistsByIdAsync(request.ReceiverId, true);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, null);
 
             // Act
             Func<Task> act = async () => await _sut.ExecuteAsync(request);
@@ -200,8 +217,12 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
         {
             // Arrange
             var request = RequestCreateTransactionDtoBuilder.Build();
-            WalletRepositoryBuilder.SetupExistsByIdAsync(request.SenderId, true);
-            WalletRepositoryBuilder.SetupExistsByIdAsync(request.ReceiverId, false);
+            var senderUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            senderWallet.SetUser(senderUser);
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, null);
 
             // Act
             Func<Task> act = async () => await _sut.ExecuteAsync(request);
@@ -231,6 +252,49 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
 
             // Assert
             await act.Should().ThrowAsync<DomainException>();
+        }
+
+        [Fact]
+        public async Task Given_AuthorizationServiceReturnsFailure_When_ExecuteAsyncIsCalled_Then_ShouldThrowErrorOnValidationException()
+        {
+            // Arrange
+            var request = RequestCreateTransactionDtoBuilder.Build();
+            var senderUser = UserEntityBuilder.BuildUser();
+            var receiverUser = UserEntityBuilder.BuildUser();
+            var senderWallet = WalletEntityBuilder.Build();
+            var receiverWallet = WalletEntityBuilder.Build();
+
+            senderWallet.SetUser(senderUser);
+            receiverWallet.SetUser(receiverUser);
+
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.SenderId, senderWallet);
+            WalletRepositoryBuilder.SetupGetByIdAsync(request.ReceiverId, receiverWallet);
+            WalletRepositoryBuilder.SetupUpdateAsync();
+            TransactionRepositoryBuilder.SetupAddAsync();
+            UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+
+            var httpClient = CreateFailureHttpClient();
+            HttpClientFactoryBuilder.SetupCreateClient(httpClient);
+
+            // Act
+            Func<Task> act = async () => await _sut.ExecuteAsync(request);
+
+            // Assert
+            await act.Should().ThrowAsync<ErrorOnValidationException>();
+        }
+
+        private static HttpClient CreateSuccessHttpClient()
+        {
+            var mockHandler = new MockHttpMessageHandler();
+            mockHandler.SetupSuccessResponse();
+            return new HttpClient(mockHandler);
+        }
+
+        private static HttpClient CreateFailureHttpClient()
+        {
+            var mockHandler = new MockHttpMessageHandler();
+            mockHandler.SetupFailureResponse();
+            return new HttpClient(mockHandler);
         }
     }
 }

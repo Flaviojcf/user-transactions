@@ -1,6 +1,8 @@
 ﻿using UserTransactions.Application.Mappers.Transaction;
 using UserTransactions.Communication.Dtos.Transaction.Request;
 using UserTransactions.Communication.Dtos.Transaction.Response;
+using UserTransactions.Domain.Constants;
+using UserTransactions.Domain.Events;
 using UserTransactions.Domain.Repositories;
 using UserTransactions.Domain.Repositories.Transaction;
 using UserTransactions.Domain.Repositories.Wallet;
@@ -20,15 +22,16 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IKafkaMessagePublisher _messagePublisher;
+        private readonly IKafkaMessageProducer _messageProducer;
+        private const string _authorizeUrl = "https://util.devi.tools/api/v2/authorize";
 
-        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IHttpClientFactory httpClientFactory, IKafkaMessagePublisher messagePublisher)
+        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IHttpClientFactory httpClientFactory, IKafkaMessageProducer messagePublisher)
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
             _unitOfWork = unitOfWork;
             _httpClientFactory = httpClientFactory;
-            _messagePublisher = messagePublisher;
+            _messageProducer = messagePublisher;
         }
 
         public async Task<ResponseCreateTransactionDto> ExecuteAsync(RequestCreateTransactionDto request)
@@ -52,14 +55,9 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
 
                 await _unitOfWork.CommitAsync();
 
-                await _messagePublisher.PublishAsync("transaction-created", new
-                {
-                    TransactionId = transaction.Id,
-                    Amount = transaction.Amount,
-                    SenderId = transaction.SenderId,
-                    ReceiverId = transaction.ReceiverId,
-                    CreatedAt = DateTime.UtcNow
-                });
+                var transactionCreatedEvent = new TransactionCreatedEvent(transaction.Id, transaction.Amount, transaction.SenderId, transaction.ReceiverId, receiverWallet.User!.Email);
+
+                await _messageProducer.PublishAsync(KafkaTopics.TransactionCreated, transaction.Id.ToString(), transactionCreatedEvent);
 
                 return transaction.MapFromTransaction();
             }
@@ -89,12 +87,11 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
             return (senderWallet, receiverWallet);
         }
 
-
         private async Task ValidateAuthorizeService()
         {
             using var httpClient = _httpClientFactory.CreateClient();
 
-            var response = await httpClient.GetAsync("https://util.devi.tools/api/v2/authorize");
+            var response = await httpClient.GetAsync(_authorizeUrl);
 
             if (!response.IsSuccessStatusCode)
             {

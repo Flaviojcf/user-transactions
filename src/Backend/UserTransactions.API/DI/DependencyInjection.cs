@@ -76,7 +76,7 @@ namespace UserTransactions.API.DI
         {
             services.Configure<KafkaOptions>(configuration.GetSection(KafkaOptions.SectionName));
             services.AddSingleton<KafkaProducerFactory>();
-            services.AddScoped<IKafkaMessagePublisher, KafkaMessagePublisher>();
+            services.AddScoped<IKafkaMessageProducer, KafkaMessageProducer>();
         }
     }
 }

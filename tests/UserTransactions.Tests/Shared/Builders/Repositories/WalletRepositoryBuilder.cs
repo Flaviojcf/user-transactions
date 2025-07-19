@@ -35,7 +35,7 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
             _mock.Setup(x => x.ExistsByIdAsync(id)).ReturnsAsync(exists);
         }
 
-        public static void SetupGetByIdAsync(Guid id, WalletEntity wallet)
+        public static void SetupGetByIdAsync(Guid id, WalletEntity? wallet)
         {
             _mock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(wallet);
         }

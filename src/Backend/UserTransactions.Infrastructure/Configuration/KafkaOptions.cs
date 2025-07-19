@@ -14,6 +14,5 @@ namespace UserTransactions.Infrastructure.Configuration
         public string ClientId { get; set; } = "UserTransactions";
         public bool EnableIdempotence { get; set; } = true;
         public string Acks { get; set; } = "all";
-        public int Retries { get; set; } = 3;
     }
 }
