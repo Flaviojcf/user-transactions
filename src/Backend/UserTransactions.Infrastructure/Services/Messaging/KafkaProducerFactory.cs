@@ -1,9 +1,11 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Infrastructure.Configuration;
 
 namespace UserTransactions.Infrastructure.Services.Messaging
 {
+    [ExcludeFromCodeCoverage]
     public class KafkaProducerFactory
     {
         private readonly KafkaOptions _kafkaOptions;

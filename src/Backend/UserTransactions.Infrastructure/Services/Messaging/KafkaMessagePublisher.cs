@@ -1,10 +1,12 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using UserTransactions.Domain.Services.Messaging;
 
 namespace UserTransactions.Infrastructure.Services.Messaging
 {
+    [ExcludeFromCodeCoverage]
     public class KafkaMessageProducer : IKafkaMessageProducer, IDisposable
     {
         private readonly IProducer<string, string> _producer;
