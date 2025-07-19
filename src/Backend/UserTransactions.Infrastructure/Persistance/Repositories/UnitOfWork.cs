@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Domain.Repositories;
 
 namespace UserTransactions.Infrastructure.Persistance.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class UnitOfWork : IUnitOfWorkRepository
     {
         private readonly UserTransactionsDbContext _dbContext;
