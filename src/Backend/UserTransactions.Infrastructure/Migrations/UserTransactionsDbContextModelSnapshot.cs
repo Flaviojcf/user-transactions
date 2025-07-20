@@ -8,7 +8,7 @@ using UserTransactions.Infrastructure.Persistance;
 
 #nullable disable
 
-namespace UserTransactions.Infrastructure.Migrations1
+namespace UserTransactions.Infrastructure.Migrations
 {
     [DbContext(typeof(UserTransactionsDbContext))]
     partial class UserTransactionsDbContextModelSnapshot : ModelSnapshot

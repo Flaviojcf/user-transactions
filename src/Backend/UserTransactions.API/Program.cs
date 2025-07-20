@@ -31,11 +31,9 @@ namespace UserTransactions.API
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<UserTransactionsDbContext>();
-                dbContext.Database.Migrate();
-            }
+            var runMigrations = builder.Configuration.GetValue<bool>("RunMigrations", false);
+
+            RunMigrations(app, runMigrations);
 
             app.MapHealthChecks("/health");
 
@@ -52,6 +50,22 @@ namespace UserTransactions.API
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static void RunMigrations(WebApplication app, bool runMigrations)
+        {
+            if (runMigrations)
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<UserTransactionsDbContext>();
+                    dbContext.Database.Migrate();
+                }
+            }
+            if (runMigrations is false)
+            {
+                app.Logger.LogInformation("RunMigrations is false. Skipping database migration....");
+            }
         }
     }
 }

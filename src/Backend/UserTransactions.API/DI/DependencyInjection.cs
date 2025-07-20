@@ -47,10 +47,7 @@ namespace UserTransactions.API.DI
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
                 {
-                    sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null);
+                    sqlOptions.EnableRetryOnFailure(0);
                 });
             });
         }
