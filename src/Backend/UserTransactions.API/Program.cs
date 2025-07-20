@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.API.DI;
 using UserTransactions.Application.DI;
 using UserTransactions.Infrastructure.DI;
+using UserTransactions.Infrastructure.Persistance;
 
 namespace UserTransactions.API
 {
@@ -28,6 +30,12 @@ namespace UserTransactions.API
             builder.Services.AddInfrastructure();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<UserTransactionsDbContext>();
+                dbContext.Database.Migrate();
+            }
 
             app.MapHealthChecks("/health");
 

@@ -45,13 +45,12 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
                 var (senderWallet, receiverWallet) = await ValidateAsync(transaction);
 
                 senderWallet.Debit(transaction.Amount);
-
                 receiverWallet.Credit(transaction.Amount);
 
+                await ValidateAuthorizeService();
                 await _walletRepository.UpdateAsync(senderWallet);
                 await _walletRepository.UpdateAsync(receiverWallet);
                 await _transactionRepository.AddAsync(transaction);
-                await ValidateAuthorizeService();
 
                 await _unitOfWork.CommitAsync();
 
