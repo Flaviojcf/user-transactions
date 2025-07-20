@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.API.DI;
 using UserTransactions.Application.DI;
 using UserTransactions.Infrastructure.DI;
+using UserTransactions.Infrastructure.Persistance;
 
 namespace UserTransactions.API
 {
@@ -29,6 +31,10 @@ namespace UserTransactions.API
 
             var app = builder.Build();
 
+            var runMigrations = builder.Configuration.GetValue<bool>("RunMigrations", false);
+
+            RunMigrations(app, runMigrations);
+
             app.MapHealthChecks("/health");
 
             if (app.Environment.IsDevelopment())
@@ -44,6 +50,22 @@ namespace UserTransactions.API
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static void RunMigrations(WebApplication app, bool runMigrations)
+        {
+            if (runMigrations)
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<UserTransactionsDbContext>();
+                    dbContext.Database.Migrate();
+                }
+            }
+            if (runMigrations is false)
+            {
+                app.Logger.LogInformation("RunMigrations is false. Skipping database migration....");
+            }
         }
     }
 }
