@@ -235,10 +235,6 @@ UserTransactions/
 
 ## ⚠️ Observações Importantes
 
-### Configurações de Email
-- A API Key do SendGrid está hardcoded no docker-compose.yml
-- Em produção, usar variáveis de ambiente ou serviços de secrets
-
 ### Desenvolvimento Local
 - Para desenvolvimento sem Docker, configurar SQL Server local
 - Ajustar connection strings nos appsettings.json
