@@ -17,9 +17,9 @@ namespace UserTransactions.Application.UseCases.Transaction.ListAll
         {
             var transactions = await _transactionRepository.ListAllAsync();
 
-            var ResponseListTransactionsDto = transactions.MapListAllFromTransactions();
+            var responseListTransactionsDto = transactions.MapListAllFromTransactions();
 
-            return ResponseListTransactionsDto;
+            return responseListTransactionsDto;
         }
     }
 }

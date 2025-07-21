@@ -20,5 +20,16 @@ namespace UserTransactions.Application.Mappers.User
                 Email = user.Email,
             };
         }
+
+        public static IList<ResponseListAllUsersDto> MapListAllFromUser(this IList<UserEntity> users)
+        {
+            return users.Select(user => new ResponseListAllUsersDto
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                CPF = user.CPF,
+                UserType = user.UserType
+            }).ToList();
+        }
     }
 }

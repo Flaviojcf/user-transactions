@@ -1,5 +1,5 @@
 using Bogus;
-using UserTransactions.Communication.Dtos.User.Response;
+using UserTransactions.Communication.Dtos.Wallet.Response;
 
 namespace UserTransactions.Tests.Shared.Builders.Dtos.Response.Wallet
 {

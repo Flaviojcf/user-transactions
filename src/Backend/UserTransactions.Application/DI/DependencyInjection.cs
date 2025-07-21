@@ -11,8 +11,10 @@ using UserTransactions.Application.UseCases.Transaction.ListLatestFourTransactio
 using UserTransactions.Application.UseCases.Transaction.ListTotal;
 using UserTransactions.Application.UseCases.Transaction.ListTotalAmount;
 using UserTransactions.Application.UseCases.User.Create;
+using UserTransactions.Application.UseCases.User.ListAll;
 using UserTransactions.Application.UseCases.User.ListTotal;
 using UserTransactions.Application.UseCases.Wallet.Create;
+using UserTransactions.Application.UseCases.Wallet.ListAll;
 using UserTransactions.Application.UseCases.Wallet.ListTotal;
 using UserTransactions.Communication.Dtos.Errors.Response;
 
@@ -41,9 +43,11 @@ namespace UserTransactions.Application.DI
 
 
             services.AddScoped<IListTotalQuantityUserUseCase, ListTotalQuantityUserUseCase>();
+            services.AddScoped<IListAllUsersUseCase, ListAllUsersUseCase>();
 
 
             services.AddScoped<IListTotalQuantityWalletUseCase, ListTotalQuantityWalletUseCase>();
+            services.AddScoped<IListAllWalletsUseCase, ListAllWalletsUseCase>();
 
             services.AddScoped<IGetOverallHealthUseCase, GetOverallHealthUseCase>();
         }

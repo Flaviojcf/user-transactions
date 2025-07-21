@@ -9,5 +9,6 @@ namespace UserTransactions.Domain.Repositories.User
         Task<bool> IsCpfAlreadyRegistered(string cpf);
         Task<bool> ExistsAndIsActiveAsync(Guid userId);
         Task<int> ListTotalQuantityAsync();
+        Task<IList<UserEntity>> ListAllAsync();
     }
 }

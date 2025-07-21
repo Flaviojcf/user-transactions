@@ -1,5 +1,6 @@
 ﻿using Moq;
 using UserTransactions.Domain.Repositories.User;
+using UserEntity = UserTransactions.Domain.Entities.User;
 
 namespace UserTransactions.Tests.Shared.Builders.Repositories
 {
@@ -27,6 +28,11 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
         public static void SetupListTotalQuantityAsync(int totalQuantity)
         {
             _mock.Setup(x => x.ListTotalQuantityAsync()).ReturnsAsync(totalQuantity);
+        }
+
+        public static void SetupListAllAsync(IList<UserEntity> users)
+        {
+            _mock.Setup(x => x.ListAllAsync()).ReturnsAsync(users);
         }
     }
 }
