@@ -23,5 +23,10 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
         {
             _mock.Setup(x => x.ExistsAndIsActiveAsync(userId)).ReturnsAsync(exists);
         }
+
+        public static void SetupListTotalQuantityAsync(int totalQuantity)
+        {
+            _mock.Setup(x => x.ListTotalQuantityAsync()).ReturnsAsync(totalQuantity);
+        }
     }
 }
