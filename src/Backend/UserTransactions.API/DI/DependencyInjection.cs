@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.API.Filter;
+using UserTransactions.Domain.Services.Health;
 using UserTransactions.Domain.Services.Messaging;
 using UserTransactions.Infrastructure.Configuration;
 using UserTransactions.Infrastructure.Persistance;
+using UserTransactions.Infrastructure.Services.Health;
 using UserTransactions.Infrastructure.Services.Messaging;
 
 namespace UserTransactions.API.DI
@@ -21,6 +23,7 @@ namespace UserTransactions.API.DI
             services.AddFilters();
             services.AddHttp();
             services.AddKafka(configuration);
+            services.AddService();
         }
 
         public static void AddVersioning(this IServiceCollection services)
@@ -80,6 +83,11 @@ namespace UserTransactions.API.DI
             services.Configure<KafkaOptions>(configuration.GetSection(KafkaOptions.SectionName));
             services.AddSingleton<KafkaProducerFactory>();
             services.AddScoped<IKafkaMessageProducer, KafkaMessageProducer>();
+        }
+
+        public static void AddService(this IServiceCollection services)
+        {
+            services.AddScoped<IHealthCheckService, HealthCheckService>();
         }
     }
 }
