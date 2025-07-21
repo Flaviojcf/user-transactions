@@ -22,17 +22,9 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> ExistsByUserIdAsync(Guid userId)
-        {
-            return await _dbContext.Wallets
-                .AnyAsync(w => w.UserId == userId && w.IsActive);
-        }
+        public async Task<bool> ExistsByUserIdAsync(Guid userId) => await _dbContext.Wallets.AnyAsync(w => w.UserId == userId && w.IsActive);
 
-        public async Task<bool> ExistsByIdAsync(Guid id)
-        {
-            return await _dbContext.Wallets
-                .AnyAsync(w => w.Id == id && w.IsActive);
-        }
+        public async Task<bool> ExistsByIdAsync(Guid id) => await _dbContext.Wallets.AnyAsync(w => w.Id == id && w.IsActive);
 
         public async Task<Wallet?> GetByIdAsync(Guid id)
         {
@@ -48,9 +40,8 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> ListTotalQuantityAsync()
-        {
-            return await _dbContext.Wallets.CountAsync();
-        }
+        public async Task<int> ListTotalQuantityAsync() => await _dbContext.Wallets.CountAsync();
+
+        public async Task<IList<Wallet>> ListAllAsync() => await _dbContext.Wallets.Include(w => w.User).ToListAsync();
     }
 }

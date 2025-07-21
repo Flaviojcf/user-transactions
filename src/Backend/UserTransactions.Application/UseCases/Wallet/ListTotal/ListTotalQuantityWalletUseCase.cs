@@ -1,4 +1,4 @@
-﻿using UserTransactions.Communication.Dtos.User.Response;
+﻿using UserTransactions.Communication.Dtos.Wallet.Response;
 using UserTransactions.Domain.Repositories.Wallet;
 
 namespace UserTransactions.Application.UseCases.Wallet.ListTotal

@@ -19,5 +19,16 @@ namespace UserTransactions.Application.Mappers.Wallet
                 Balance = wallet.Balance
             };
         }
+
+        public static IList<ResponseListAllWalletsDto> MapListAllFromWallet(this IList<WalletEntity> wallets)
+        {
+            return wallets.Select(wallet => new ResponseListAllWalletsDto
+            {
+                FullName = wallet.User!.FullName,
+                Email = wallet.User!.Email,
+                UserType = wallet.User.UserType,
+                Balance = wallet.Balance
+            }).ToList();
+        }
     }
 }

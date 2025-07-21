@@ -49,5 +49,10 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
         {
             _mock.Setup(x => x.ListTotalQuantityAsync()).ReturnsAsync(totalQuantity);
         }
+
+        public static void SetupListAllAsync(IList<WalletEntity> wallets)
+        {
+            _mock.Setup(x => x.ListAllAsync()).ReturnsAsync(wallets);
+        }
     }
 }

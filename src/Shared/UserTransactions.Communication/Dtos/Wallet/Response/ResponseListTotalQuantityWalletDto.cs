@@ -1,4 +1,4 @@
-﻿namespace UserTransactions.Communication.Dtos.User.Response
+﻿namespace UserTransactions.Communication.Dtos.Wallet.Response
 {
     public class ResponseListTotalQuantityWalletDto
     {

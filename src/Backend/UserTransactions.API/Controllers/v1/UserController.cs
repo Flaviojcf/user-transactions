@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Application.UseCases.User.Create;
+using UserTransactions.Application.UseCases.User.ListAll;
 using UserTransactions.Application.UseCases.User.ListTotal;
 using UserTransactions.Communication.Dtos.Errors.Response;
 using UserTransactions.Communication.Dtos.User.Request;
@@ -23,8 +24,16 @@ namespace UserTransactions.API.Controllers.v1
         public async Task<IActionResult> RegisterUser([FromBody] RequestCreateUserDto request, [FromServices] ICreateUserUseCase useCase)
         {
             var result = await useCase.ExecuteAsync(request);
-
             return CreatedAtAction(nameof(RegisterUser), new { id = result.Id }, result);
+        }
+
+        [HttpGet("list-all")]
+        [ProducesResponseType(typeof(ResponseListAllUsersDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseErrorDto), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ListAllUsers([FromServices] IListAllUsersUseCase useCase)
+        {
+            var result = await useCase.ExecuteAsync();
+            return Ok(result);
         }
 
         [HttpGet("list-total-quantity")]

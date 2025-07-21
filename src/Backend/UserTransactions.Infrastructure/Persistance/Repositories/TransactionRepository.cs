@@ -31,15 +31,9 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> ListTotalAsync()
-        {
-            return await _dbContext.Transactions.CountAsync();
-        }
+        public async Task<int> ListTotalAsync() => await _dbContext.Transactions.CountAsync();
 
-        public async Task<decimal> ListTotalAmountAsync()
-        {
-            return await _dbContext.Transactions.SumAsync(t => t.Amount);
-        }
+        public async Task<decimal> ListTotalAmountAsync() => await _dbContext.Transactions.SumAsync(t => t.Amount);
 
         public async Task<IList<Transaction>> ListLatestFourAsync()
         {
