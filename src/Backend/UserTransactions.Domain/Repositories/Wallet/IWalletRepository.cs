@@ -9,5 +9,6 @@ namespace UserTransactions.Domain.Repositories.Wallet
         Task<bool> ExistsByIdAsync(Guid id);
         Task<WalletEntity?> GetByIdAsync(Guid id);
         Task UpdateAsync(WalletEntity wallet);
+        Task<int> ListTotalQuantityAsync();
     }
 }
