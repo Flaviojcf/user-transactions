@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 using UserTransactions.Domain.Entities;
 using UserTransactions.Domain.Repositories.Transaction;
 
 namespace UserTransactions.Infrastructure.Persistance.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class TransactionRepository : ITransactionRepository
     {
         private readonly UserTransactionsDbContext _dbContext;
