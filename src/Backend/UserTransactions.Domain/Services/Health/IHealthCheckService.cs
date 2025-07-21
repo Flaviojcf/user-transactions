@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace UserTransactions.Domain.Services.Health
 {
     public interface IHealthCheckService
@@ -7,6 +9,7 @@ namespace UserTransactions.Domain.Services.Health
         Task<HealthCheckResult> CheckKafkaUIAsync();
     }
 
+    [ExcludeFromCodeCoverage]
     public class HealthCheckResult
     {
         public string Service { get; set; } = string.Empty;
