@@ -8,5 +8,6 @@ namespace UserTransactions.Domain.Repositories.User
         Task<bool> IsEmailAlreadyRegistered(string email);
         Task<bool> IsCpfAlreadyRegistered(string cpf);
         Task<bool> ExistsAndIsActiveAsync(Guid userId);
+        Task<int> ListTotalQuantityAsync();
     }
 }

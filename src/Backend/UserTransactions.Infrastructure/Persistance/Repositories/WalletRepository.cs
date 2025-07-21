@@ -47,5 +47,10 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> ListTotalQuantityAsync()
+        {
+            return await _dbContext.Wallets.CountAsync();
+        }
     }
 }

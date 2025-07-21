@@ -36,5 +36,10 @@ namespace UserTransactions.Infrastructure.Persistance.Repositories
         {
             return await _dbContext.Users.AnyAsync(u => u.Id == userId && u.IsActive);
         }
+
+        public async Task<int> ListTotalQuantityAsync()
+        {
+            return await _dbContext.Users.CountAsync();
+        }
     }
 }

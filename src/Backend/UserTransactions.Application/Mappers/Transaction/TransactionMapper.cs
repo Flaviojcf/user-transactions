@@ -19,5 +19,16 @@ namespace UserTransactions.Application.Mappers.Transaction
                 Amount = transaction.Amount,
             };
         }
+
+        public static IList<ResponseListTransactionsDto> MapListAllFromTransactions(this IList<TransactionEntity> transactions)
+        {
+            return transactions.Select(transaction => new ResponseListTransactionsDto
+            {
+                SenderName = transaction.Sender!.User!.FullName,
+                ReceiverName = transaction.Receiver!.User!.FullName,
+                Amount = transaction.Amount,
+                CreatedAt = transaction.CreatedAt
+            }).ToList();
+        }
     }
 }
