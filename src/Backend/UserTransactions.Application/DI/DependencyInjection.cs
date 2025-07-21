@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using UserTransactions.Application.UseCases.Health.GetOverallHealth;
 using UserTransactions.Application.UseCases.Transaction.Create;
 using UserTransactions.Application.UseCases.Transaction.ListAll;
 using UserTransactions.Application.UseCases.Transaction.ListLatestFourTransactions;
@@ -43,6 +44,8 @@ namespace UserTransactions.Application.DI
 
 
             services.AddScoped<IListTotalQuantityWalletUseCase, ListTotalQuantityWalletUseCase>();
+
+            services.AddScoped<IGetOverallHealthUseCase, GetOverallHealthUseCase>();
         }
 
         private static void AddValidation(this IServiceCollection services)
