@@ -25,11 +25,11 @@ namespace UserTransactions.API.Filter
 
         private static void HandleProjectException(ExceptionContext context)
         {
-            if (context.Exception is ErrorOnValidationException exception)
+            if (context.Exception is ErrorOnValidationException errorOnValidationException)
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-                context.Result = new BadRequestObjectResult(new ResponseErrorDto(exception!.Errors, HttpStatusCode.BadRequest));
+                context.Result = new BadRequestObjectResult(new ResponseErrorDto(errorOnValidationException!.Errors, HttpStatusCode.BadRequest));
 
                 return;
             }
@@ -40,6 +40,16 @@ namespace UserTransactions.API.Filter
 
                 context.Result = new BadRequestObjectResult(new ResponseErrorDto(domainException.Message, HttpStatusCode.BadRequest));
 
+                return;
+            }
+
+            if (context.Exception is ErrorOnAuthorizeException errorOnAuthorizeException)
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+                context.Result = new ObjectResult(new ResponseErrorDto(errorOnAuthorizeException!.Errors, HttpStatusCode.Forbidden))
+                {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
                 return;
             }
         }

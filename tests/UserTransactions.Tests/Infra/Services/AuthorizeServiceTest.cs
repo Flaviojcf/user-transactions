@@ -48,7 +48,7 @@ namespace UserTransactions.Tests.Infra.Services
         [InlineData(HttpStatusCode.Forbidden)]
         [InlineData(HttpStatusCode.NotFound)]
         [InlineData(HttpStatusCode.InternalServerError)]
-        public async Task Given_AuthorizeServiceReturnsError_When_ValidateAuthorizeServiceIsCalled_Then_ShouldThrowErrorOnValidationException(HttpStatusCode httpStatusCode)
+        public async Task Given_AuthorizeServiceReturnsError_When_ValidateAuthorizeServiceIsCalled_Then_ShouldThrowErrorOnAuthorizeException(HttpStatusCode httpStatusCode)
         {
             // Arrange
             HttpClientFactoryBuilder.SetupCreateClient(_httpClient);
@@ -63,7 +63,7 @@ namespace UserTransactions.Tests.Infra.Services
             Func<Task> act = async () => await _sut.ValidateAuthorizeService();
 
             // Assert
-            await act.Should().ThrowAsync<ErrorOnValidationException>();
+            await act.Should().ThrowAsync<ErrorOnAuthorizeException>();
         }
     }
 }
