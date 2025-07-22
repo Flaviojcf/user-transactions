@@ -9,7 +9,7 @@ namespace UserTransactions.Application.Mappers.User
     {
         public static UserEntity MapToUser(this RequestCreateUserDto request)
         {
-            return new UserEntity(request.FullName, request.Email, Clean(request.CPF), request.Password, request.UserType);
+            return new UserEntity(request.FullName, request.Email, FormatCpf(request.CPF), request.Password, request.UserType);
         }
 
         public static ResponseCreateUserDto MapFromUser(this UserEntity user)
@@ -34,7 +34,7 @@ namespace UserTransactions.Application.Mappers.User
             }).ToList();
         }
 
-        private static string Clean(string cpf)
+        private static string FormatCpf(string cpf)
         {
             return Regex.Replace(cpf ?? string.Empty, @"[^\d]", "");
         }
