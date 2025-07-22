@@ -1,4 +1,5 @@
 ﻿using Moq;
+using System.Text.RegularExpressions;
 using UserTransactions.Domain.Repositories.User;
 using UserEntity = UserTransactions.Domain.Entities.User;
 
@@ -17,7 +18,7 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
 
         public static void SetupIsCpfAlreadyRegistered(string cpf)
         {
-            _mock.Setup(x => x.IsCpfAlreadyRegistered(cpf)).ReturnsAsync(true);
+            _mock.Setup(x => x.IsCpfAlreadyRegistered(FormatCpf(cpf))).ReturnsAsync(true);
         }
 
         public static void SetupExistsAndIsActiveAsync(Guid userId, bool exists)
@@ -33,6 +34,11 @@ namespace UserTransactions.Tests.Shared.Builders.Repositories
         public static void SetupListAllAsync(IList<UserEntity> users)
         {
             _mock.Setup(x => x.ListAllAsync()).ReturnsAsync(users);
+        }
+
+        private static string FormatCpf(string cpf)
+        {
+            return Regex.Replace(cpf ?? string.Empty, @"[^\d]", "");
         }
     }
 }

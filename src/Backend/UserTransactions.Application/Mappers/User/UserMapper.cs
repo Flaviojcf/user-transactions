@@ -1,4 +1,5 @@
-﻿using UserTransactions.Communication.Dtos.User.Request;
+﻿using System.Text.RegularExpressions;
+using UserTransactions.Communication.Dtos.User.Request;
 using UserTransactions.Communication.Dtos.User.Response;
 using UserEntity = UserTransactions.Domain.Entities.User;
 
@@ -8,7 +9,7 @@ namespace UserTransactions.Application.Mappers.User
     {
         public static UserEntity MapToUser(this RequestCreateUserDto request)
         {
-            return new UserEntity(request.FullName, request.Email, request.CPF, request.Password, request.UserType);
+            return new UserEntity(request.FullName, request.Email, FormatCpf(request.CPF), request.Password, request.UserType);
         }
 
         public static ResponseCreateUserDto MapFromUser(this UserEntity user)
@@ -25,11 +26,17 @@ namespace UserTransactions.Application.Mappers.User
         {
             return users.Select(user => new ResponseListAllUsersDto
             {
+                Id = user.Id,
                 FullName = user.FullName,
                 Email = user.Email,
                 CPF = user.CPF,
                 UserType = user.UserType
             }).ToList();
+        }
+
+        private static string FormatCpf(string cpf)
+        {
+            return Regex.Replace(cpf ?? string.Empty, @"[^\d]", "");
         }
     }
 }

@@ -17,87 +17,36 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { useState } from "react";
+import { useApp } from "@/contexts/AppContext";
 
 export default function TabTransactions() {
+  const { wallets, transactions, loading, error, createTransaction } =
+    useApp();
+
   const [transactionForm, setTransactionForm] = useState({
     amount: "",
     senderId: "",
     receiverId: "",
   });
 
-  const users = [
-    {
-      id: "1",
-      name: "João Silva",
-      email: "joao@example.com",
-      type: "User",
-      cpf: "123.456.789-01",
-      balance: 750.0,
-    },
-    {
-      id: "2",
-      name: "Maria Santos",
-      email: "maria@example.com",
-      type: "Merchant",
-      cpf: "987.654.321-09",
-      balance: 1250.0,
-    },
-    {
-      id: "3",
-      name: "Pedro Costa",
-      email: "pedro@example.com",
-      type: "User",
-      cpf: "456.789.123-45",
-      balance: 320.5,
-    },
-  ];
-
-  const transactions = [
-    {
-      id: "1",
-      from: "João Silva",
-      to: "Maria Santos",
-      amount: 150.0,
-      status: "Completed",
-      date: "2024-01-15 14:30",
-      type: "transfer",
-    },
-    {
-      id: "2",
-      from: "Pedro Costa",
-      to: "João Silva",
-      amount: 75.5,
-      status: "Completed",
-      date: "2024-01-15 13:15",
-      type: "transfer",
-    },
-    {
-      id: "3",
-      from: "João Silva",
-      to: "Pedro Costa",
-      amount: 200.0,
-      status: "Failed",
-      date: "2024-01-15 12:00",
-      type: "transfer",
-    },
-    {
-      id: "4",
-      from: "Maria Santos",
-      to: "João Silva",
-      amount: 300.0,
-      status: "Pending",
-      date: "2024-01-15 11:45",
-      type: "transfer",
-    },
-  ];
-
-  const handleTransactionSubmit = (e: React.FormEvent) => {
+  const handleTransactionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Transaction:", transactionForm);
-    setTransactionForm({ amount: "", senderId: "", receiverId: "" });
+    try {
+      await createTransaction({
+        amount: parseFloat(transactionForm.amount),
+        senderId: transactionForm.senderId,
+        receiverId: transactionForm.receiverId,
+      });
+
+      setTransactionForm({ amount: "", senderId: "", receiverId: "" });
+    } catch (err) {
+      console.error("Erro ao criar transação:", err);
+    }
   };
+
+  const senderWallets = wallets.filter(w => w.userType === 1);
 
   return (
     <TabsContent value="transactions" className="space-y-6">
@@ -138,13 +87,14 @@ export default function TabTransactions() {
                     <SelectValue placeholder="Selecione o remetente" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users
-                      .filter((u) => u.type === "User")
-                      .map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
-                          {user.name} - R$ {user.balance.toFixed(2)}
+                    {senderWallets.map((wallet) => {
+                      return (
+                        <SelectItem key={wallet.id} value={wallet.id}>
+                          {wallet.fullName} - R${" "}
+                          {wallet?.balance.toFixed(2) || "0.00"}
                         </SelectItem>
-                      ))}
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -163,17 +113,17 @@ export default function TabTransactions() {
                     <SelectValue placeholder="Selecione o destinatário" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.name} (
-                        {user.type === "User" ? "Usuário" : "Lojista"})
+                    {wallets.map((wallet) => (
+                      <SelectItem key={wallet.id} value={wallet.id}>
+                        {wallet.fullName} - R${" "}
+                        {wallet?.balance.toFixed(2) || "0.00"}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full">
-                Processar Transação
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Processando..." : "Processar Transação"}
               </Button>
             </form>
           </CardContent>
@@ -185,57 +135,49 @@ export default function TabTransactions() {
             <CardDescription>Todas as transações processadas</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {transactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center">
-                      {transaction.status === "Completed" && (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      )}
-                      {transaction.status === "Failed" && (
-                        <XCircle className="h-5 w-5 text-red-500" />
-                      )}
-                      {transaction.status === "Pending" && (
-                        <Clock className="h-5 w-5 text-yellow-500" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">
-                        {transaction.from} → {transaction.to}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {transaction.date}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      R$ {transaction.amount.toFixed(2)}
-                    </p>
-                    <Badge
-                      variant={
-                        transaction.status === "Completed"
-                          ? "default"
-                          : transaction.status === "Failed"
-                          ? "destructive"
-                          : "secondary"
-                      }
-                      className="text-xs"
+            {loading ? (
+              <p>Carregando...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {transactions.length === 0 ? (
+                  <p>Nenhuma transação encontrada.</p>
+                ) : (
+                  transactions.map((transaction) => (
+                    <div
+                      key={transaction.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
                     >
-                      {transaction.status === "Completed"
-                        ? "Concluída"
-                        : transaction.status === "Failed"
-                        ? "Falhou"
-                        : "Pendente"}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center">
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">
+                            {transaction.senderName} →{" "}
+                            {transaction.receiverName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(transaction.createdAt).toLocaleString(
+                              "pt-BR"
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">
+                          R$ {transaction.amount.toFixed(2)}
+                        </p>
+                        <Badge variant={"default"} className="text-xs">
+                          Concluída
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

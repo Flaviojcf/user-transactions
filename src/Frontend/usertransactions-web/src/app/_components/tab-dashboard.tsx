@@ -2,47 +2,65 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { ArrowRightLeft, CheckCircle, Clock, TrendingUp, Users, Wallet, XCircle } from "lucide-react";
+import { ArrowRightLeft, CheckCircle, TrendingUp, Users, Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useApp } from "@/contexts/AppContext";
+import { Transaction, HealthStatus } from "@/lib/types";
+import { getInitials } from "@/lib/utils";
 
 export function TabDashboard() {
-    const transactions = [
-    {
-      id: "1",
-      from: "João Silva",
-      to: "Maria Santos",
-      amount: 150.0,
-      status: "Completed",
-      date: "2024-01-15 14:30",
-      type: "transfer",
-    },
-    {
-      id: "2",
-      from: "Pedro Costa",
-      to: "João Silva",
-      amount: 75.5,
-      status: "Completed",
-      date: "2024-01-15 13:15",
-      type: "transfer",
-    },
-    {
-      id: "3",
-      from: "João Silva",
-      to: "Pedro Costa",
-      amount: 200.0,
-      status: "Completed",
-      date: "2024-01-15 12:00",
-      type: "transfer",
-    },
-    {
-      id: "4",
-      from: "Maria Santos",
-      to: "João Silva",
-      amount: 300.0,
-      status: "Completed",
-      date: "2024-01-15 11:45",
-      type: "transfer",
-    },
-  ]
+  const { 
+    getUsersCount, 
+    getWalletsCount, 
+    getTransactionsCount, 
+    getTransactionsTotalAmount,
+    getLatestTransactions,
+    getHealthStatus
+  } = useApp();
+  
+  const [stats, setStats] = useState({
+    usersCount: { totalQuantity: 0 },
+    walletsCount: { totalQuantity: 0 },
+    transactionsCount: { totalQuantity: 0 },
+    totalAmount: { totalAmount: 0 }
+  });
+  
+  const [latestTransactions, setLatestTransactions] = useState<Transaction[]>([]);
+  const [healthStatus, setHealthStatus] = useState<HealthStatus>({
+    mainApi: 'offline',
+    services: []
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try { 
+        const [usersCount, walletsCount, transactionsCount, totalAmount] = await Promise.all([
+          getUsersCount(),
+          getWalletsCount(), 
+          getTransactionsCount(),
+          getTransactionsTotalAmount()
+        ]);
+        
+        setStats({
+          usersCount,
+          walletsCount,
+          transactionsCount,
+          totalAmount
+        });
+        
+        const latest = await getLatestTransactions();
+        setLatestTransactions(latest || []);
+        
+        const health = await getHealthStatus();
+        setHealthStatus(health);
+      } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+      }
+    };
+
+    loadStats();
+  }, [getUsersCount, getWalletsCount, getTransactionsCount, getTransactionsTotalAmount, getLatestTransactions, getHealthStatus]);
+
   
     return (
         <TabsContent value="dashboard" className="space-y-6">
@@ -53,7 +71,7 @@ export function TabDashboard() {
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">1,234</div>
+                  <div className="text-2xl font-bold">{stats.usersCount.totalQuantity}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -62,7 +80,7 @@ export function TabDashboard() {
                   <Wallet className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">987</div>
+                  <div className="text-2xl font-bold">{stats.walletsCount.totalQuantity}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -71,7 +89,7 @@ export function TabDashboard() {
                   <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">156</div>
+                  <div className="text-2xl font-bold">{stats.transactionsCount.totalQuantity}</div>
                 </CardContent>
               </Card>
               <Card>
@@ -80,7 +98,7 @@ export function TabDashboard() {
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">R$ 45.231</div>
+                  { <div className="text-2xl font-bold">R$ {stats.totalAmount.totalAmount.toFixed(2)}</div> }
                 </CardContent>
               </Card>
             </div>
@@ -93,30 +111,32 @@ export function TabDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {transactions.slice(0, 4).map((transaction) => (
-                      <div key={transaction.id} className="flex items-center justify-between">
+                    {latestTransactions.map((transaction) => (
+                      <div key={transaction.createdAt.toString()} className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-8 w-8">
                             <AvatarFallback>
-                              {transaction.from
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                              {getInitials(transaction.senderName!)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="text-sm font-medium">
-                              {transaction.from} → {transaction.to}
+                              {transaction.senderName} → {transaction.receiverName}
                             </p>
-                            <p className="text-xs text-muted-foreground">{transaction.date}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(transaction.createdAt).toLocaleString('pt-BR')}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className="text-sm font-medium">R$ {transaction.amount.toFixed(2)}</span>
-                          {transaction.status === "Completed" && <CheckCircle className="h-4 w-4 text-green-500" />}
+                          <CheckCircle className="h-4 w-4 text-green-500" />
                         </div>
                       </div>
                     ))}
+                    {latestTransactions.length === 0 && (
+                      <p className="text-sm text-muted-foreground">Nenhuma transação encontrada</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -130,28 +150,43 @@ export function TabDashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm">API Principal</span>
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        Online
+                      <Badge 
+                        variant="outline" 
+                        className={
+                          healthStatus.mainApi === 'online' 
+                            ? "text-green-600 border-green-600 animate-pulse"
+                            : "text-red-600 border-red-600"
+                        }
+                      >
+                        {healthStatus.mainApi === 'online' ? 'Online' : 'Offline'}
                       </Badge>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Kafka</span>
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        Online
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">SQL Server</span>
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        Online
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">SendGrid</span>
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        Online
-                      </Badge>
-                    </div>
+                    
+                    {healthStatus.services.map((service) => (
+                      <div key={service.service} className="flex items-center justify-between">
+                        <span className="text-sm capitalize">
+                          {service.service === 'sqlServer' ? 'SQL Server' : 
+                           service.service === 'kafka-ui' ? 'Kafka UI' : 
+                           service.service.charAt(0).toUpperCase() + service.service.slice(1)}
+                        </span>
+                        <Badge 
+                          variant="outline" 
+                          className={
+                            service.status === 'healthy' 
+                              ? "text-green-600 border-green-600 animate-pulse"
+                              : "text-red-600 border-red-600"
+                          }
+                        >
+                          {service.status === 'healthy' ? 'Online' : 'Offline'}
+                        </Badge>
+                      </div>
+                    ))}
+                    
+                    {healthStatus.services.length === 0 && healthStatus.mainApi === 'offline' && (
+                      <p className="text-sm text-muted-foreground">
+                        Não foi possível verificar o status dos serviços
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

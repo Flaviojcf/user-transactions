@@ -24,6 +24,7 @@ namespace UserTransactions.Application.Mappers.Wallet
         {
             return wallets.Select(wallet => new ResponseListAllWalletsDto
             {
+                Id = wallet.Id,
                 FullName = wallet.User!.FullName,
                 Email = wallet.User!.Email,
                 UserType = wallet.User.UserType,
