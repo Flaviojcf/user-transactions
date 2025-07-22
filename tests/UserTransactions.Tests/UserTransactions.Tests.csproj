@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Backend\UserTransactions.Application\UserTransactions.Application.csproj" />
     <ProjectReference Include="..\..\src\Backend\UserTransactions.Domain\UserTransactions.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Backend\UserTransactions.Infrastructure\UserTransactions.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Shared\UserTransactions.Communication\UserTransactions.Communication.csproj" />
     <ProjectReference Include="..\..\src\Shared\UserTransactions.Exception\UserTransactions.Exception.csproj" />
   </ItemGroup>
