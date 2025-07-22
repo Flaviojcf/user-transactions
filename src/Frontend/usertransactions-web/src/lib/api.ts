@@ -1,4 +1,4 @@
-import { TotalAmountResponse, TotalQuantityResponse } from "./types";
+import { TotalAmountResponse, TotalQuantityResponse, ApiErrorResponse } from "./types";
 
 const API_BASE_URL = 'https://localhost:7035/v1';
 
@@ -19,13 +19,35 @@ export class ApiService {
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        let errorData: ApiErrorResponse;
+        try {
+          errorData = await response.json();
+        } catch {
+          // Se não conseguir fazer parse do JSON, cria um erro genérico
+          errorData = {
+            traceId: '',
+            type: '',
+            statusCode: response.status,
+            errorDetails: {
+              messages: [`Erro ${response.status}: ${response.statusText}`]
+            }
+          };
+        }
+        throw errorData;
       }
 
       return response.json();
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Erro de conexão com a API. Verifique se o servidor está rodando em HTTPS.');
+        const connectionError: ApiErrorResponse = {
+          traceId: '',
+          type: 'connection-error',
+          statusCode: 0,
+          errorDetails: {
+            messages: ['Erro de conexão com a API. Verifique se o servidor está rodando em HTTPS.']
+          }
+        };
+        throw connectionError;
       }
       throw error;
     }
@@ -98,11 +120,29 @@ export class ApiService {
     const url = 'https://localhost:7035/health';
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        const errorData: ApiErrorResponse = {
+          traceId: '',
+          type: 'health-check-error',
+          statusCode: response.status,
+          errorDetails: {
+            messages: [`API Error: ${response.status} ${response.statusText}`]
+          }
+        };
+        throw errorData;
+      }
       return response.text(); 
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Erro de conexão com a API principal');
+        const connectionError: ApiErrorResponse = {
+          traceId: '',
+          type: 'connection-error',
+          statusCode: 0,
+          errorDetails: {
+            messages: ['Erro de conexão com a API principal']
+          }
+        };
+        throw connectionError;
       }
       throw error;
     }

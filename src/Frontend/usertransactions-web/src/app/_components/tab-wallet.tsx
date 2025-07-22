@@ -21,7 +21,7 @@ import { useState } from "react";
 import { useApp } from "@/contexts/AppContext";
 
 export default function TabWallet() {
-  const { users, wallets, loading, error, createWallet } = useApp();
+  const { users, wallets, loading, createWallet } = useApp();
   const [selectedUserId, setSelectedUserId] = useState("");
 
   const handleWalletSubmit = async (e: React.FormEvent) => {
@@ -32,10 +32,9 @@ export default function TabWallet() {
       await createWallet(selectedUserId);
       setSelectedUserId("");
     } catch (err) {
-      console.error("Erro ao criar carteira:", err);
+      console.log("Erro ao criar carteira:", err);
     }
   };
-
 
   return (
     <TabsContent value="wallets" className="space-y-6">
@@ -117,8 +116,6 @@ export default function TabWallet() {
           <CardContent>
             {loading ? (
               <p>Carregando...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {wallets.length === 0 ? (

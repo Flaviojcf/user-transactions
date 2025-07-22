@@ -22,8 +22,7 @@ import { useState } from "react";
 import { useApp } from "@/contexts/AppContext";
 
 export default function TabTransactions() {
-  const { wallets, transactions, loading, error, createTransaction } =
-    useApp();
+  const { wallets, transactions, loading, createTransaction } = useApp();
 
   const [transactionForm, setTransactionForm] = useState({
     amount: "",
@@ -42,7 +41,7 @@ export default function TabTransactions() {
 
       setTransactionForm({ amount: "", senderId: "", receiverId: "" });
     } catch (err) {
-      console.error("Erro ao criar transação:", err);
+      console.log("Erro ao criar transação:", err);
     }
   };
 
@@ -137,8 +136,6 @@ export default function TabTransactions() {
           <CardContent>
             {loading ? (
               <p>Carregando...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {transactions.length === 0 ? (

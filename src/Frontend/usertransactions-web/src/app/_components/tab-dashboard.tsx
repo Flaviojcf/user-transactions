@@ -54,7 +54,7 @@ export function TabDashboard() {
         const health = await getHealthStatus();
         setHealthStatus(health);
       } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
+        console.log('Erro ao carregar estatísticas:', error);
       }
     };
 

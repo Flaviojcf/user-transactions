@@ -22,8 +22,7 @@ import { useState } from "react";
 import { useApp } from "@/contexts/AppContext";
 
 export function TabUser() {
-  const { users, loading, error, success, createUser, clearMessages } =
-    useApp();
+  const { users, loading, createUser } = useApp();
 
   const [userForm, setUserForm] = useState({
     fullName: "",
@@ -52,7 +51,7 @@ export function TabUser() {
         userType: "",
       });
     } catch (err) {
-      console.error("Erro ao cadastrar usuário:", err);
+      console.log("Erro ao cadastrar usuário:", err);
     }
   };
 
@@ -65,17 +64,6 @@ export function TabUser() {
             <CardDescription>Criar usuário comum ou lojista</CardDescription>
           </CardHeader>
           <CardContent>
-            {success && (
-              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                {success}
-                <button
-                  onClick={clearMessages}
-                  className="ml-2 text-green-600 hover:text-green-800"
-                >
-                  ×
-                </button>
-              </div>
-            )}
             <form onSubmit={handleUserSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName">Nome Completo</Label>
@@ -161,8 +149,6 @@ export function TabUser() {
           <CardContent>
             {loading ? (
               <p>Carregando...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {users.length === 0 ? (
