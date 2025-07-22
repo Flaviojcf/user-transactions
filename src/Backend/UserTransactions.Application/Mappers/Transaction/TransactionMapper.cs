@@ -24,6 +24,7 @@ namespace UserTransactions.Application.Mappers.Transaction
         {
             return transactions.Select(transaction => new ResponseListTransactionsDto
             {
+                Id = transaction.Id,
                 SenderName = transaction.Sender!.User!.FullName,
                 ReceiverName = transaction.Receiver!.User!.FullName,
                 Amount = transaction.Amount,

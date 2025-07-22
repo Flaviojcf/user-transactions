@@ -17,34 +17,25 @@ import {
 } from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
 import { ArrowRightLeft, CheckCircle, Wallet } from "lucide-react";
+import { useState } from "react";
+import { useApp } from "@/contexts/AppContext";
 
 export default function TabWallet() {
-  const users = [
-    {
-      id: "1",
-      name: "João Silva",
-      email: "joao@example.com",
-      type: "User",
-      cpf: "123.456.789-01",
-      balance: 750.0,
-    },
-    {
-      id: "2",
-      name: "Maria Santos",
-      email: "maria@example.com",
-      type: "Merchant",
-      cpf: "987.654.321-09",
-      balance: 1250.0,
-    },
-    {
-      id: "3",
-      name: "Pedro Costa",
-      email: "pedro@example.com",
-      type: "User",
-      cpf: "456.789.123-45",
-      balance: 320.5,
-    },
-  ];
+  const { users, wallets, loading, error, createWallet } = useApp();
+  const [selectedUserId, setSelectedUserId] = useState("");
+
+  const handleWalletSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId) return;
+
+    try {
+      await createWallet(selectedUserId);
+      setSelectedUserId("");
+    } catch (err) {
+      console.error("Erro ao criar carteira:", err);
+    }
+  };
+
 
   return (
     <TabsContent value="wallets" className="space-y-6">
@@ -57,26 +48,21 @@ export default function TabWallet() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log(
-                  "Wallet registration for user:",
-                  e.currentTarget.userId.value
-                );
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleWalletSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="userId">Selecionar Usuário</Label>
-                <Select name="userId" required>
+                <Select
+                  value={selectedUserId}
+                  onValueChange={setSelectedUserId}
+                  required
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione um usuário" />
                   </SelectTrigger>
                   <SelectContent>
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
-                        {user.name} - {user.email}
+                        {user.fullName} - {user.email}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -113,9 +99,9 @@ export default function TabWallet() {
                   </div>
                 </div>
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={loading}>
                 <Wallet className="h-4 w-4 mr-2" />
-                Criar Carteira
+                {loading ? "Criando..." : "Criar Carteira"}
               </Button>
             </form>
           </CardContent>
@@ -129,63 +115,75 @@ export default function TabWallet() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {users.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <Wallet className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {user.email}
-                      </p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Badge
-                          variant={
-                            user.type === "User" ? "default" : "secondary"
-                          }
-                          className="text-xs"
-                        >
-                          {user.type === "User" ? "Usuário" : "Lojista"}
-                        </Badge>
+            {loading ? (
+              <p>Carregando...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {wallets.length === 0 ? (
+                  <p>Nenhuma carteira cadastrada.</p>
+                ) : (
+                  wallets.map((wallet) => {
+                    return (
+                      <div
+                        key={wallet.id}
+                        className="flex items-center justify-between p-4 border border-border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
+                            <Wallet className="h-5 w-5 text-green-600 dark:text-green-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{wallet.fullName}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {wallet.email}
+                            </p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Badge
+                                variant={
+                                  wallet.userType === 1 ? "default" : "secondary"
+                                }
+                                className="text-xs"
+                              >
+                                {wallet.userType === 1 ? "Usuário" : "Lojista"}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right space-y-2">
+                          <div>
+                            <p className="text-2xl font-bold text-green-600">
+                              R$ {wallet.balance.toFixed(2)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Saldo disponível
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            {wallet.userType === 1 ? (
+                              <>
+                                <ArrowRightLeft className="h-3 w-3 text-green-500" />
+                                <span className="text-xs text-green-600">
+                                  Pode enviar/receber
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <ArrowRightLeft className="h-3 w-3 text-blue-500 rotate-180" />
+                                <span className="text-xs text-blue-600">
+                                  Apenas receber
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="text-right space-y-2">
-                    <div>
-                      <p className="text-2xl font-bold text-green-600">
-                        R$ {user.balance.toFixed(2)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Saldo disponível
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      {user.type === "User" ? (
-                        <>
-                          <ArrowRightLeft className="h-3 w-3 text-green-500" />
-                          <span className="text-xs text-green-600">
-                            Pode enviar/receber
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <ArrowRightLeft className="h-3 w-3 text-blue-500 rotate-180" />
-                          <span className="text-xs text-blue-600">
-                            Apenas receber
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
