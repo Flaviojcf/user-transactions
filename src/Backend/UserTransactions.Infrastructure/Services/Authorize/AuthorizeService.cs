@@ -23,7 +23,7 @@ namespace UserTransactions.Infrastructure.Services.Authorize
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new ErrorOnValidationException([ResourceMessagesException.TransactionNotAuthorized]);
+                throw new ErrorOnAuthorizeException([ResourceMessagesException.TransactionNotAuthorized]);
             }
         }
     }
