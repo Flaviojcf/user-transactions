@@ -6,6 +6,7 @@ using UserTransactions.Domain.Events;
 using UserTransactions.Domain.Repositories;
 using UserTransactions.Domain.Repositories.Transaction;
 using UserTransactions.Domain.Repositories.Wallet;
+using UserTransactions.Domain.Services.Authorize;
 using UserTransactions.Domain.Services.Messaging;
 using UserTransactions.Exception;
 using UserTransactions.Exception.Exceptions;
@@ -21,16 +22,15 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
         private readonly ITransactionRepository _transactionRepository;
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWorkRepository _unitOfWork;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IAuthorizeService _authorizeService;
         private readonly IKafkaMessageProducer _messageProducer;
-        private const string _authorizeUrl = "https://util.devi.tools/api/v2/authorize";
 
-        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IHttpClientFactory httpClientFactory, IKafkaMessageProducer messagePublisher)
+        public CreateTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository, IUnitOfWorkRepository unitOfWork, IAuthorizeService authorizeService, IKafkaMessageProducer messagePublisher)
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
             _unitOfWork = unitOfWork;
-            _httpClientFactory = httpClientFactory;
+            _authorizeService = authorizeService;
             _messageProducer = messagePublisher;
         }
 
@@ -47,7 +47,7 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
                 senderWallet.Debit(transaction.Amount);
                 receiverWallet.Credit(transaction.Amount);
 
-                await ValidateAuthorizeService();
+                await _authorizeService.ValidateAuthorizeService();
                 await _walletRepository.UpdateAsync(senderWallet);
                 await _walletRepository.UpdateAsync(receiverWallet);
                 await _transactionRepository.AddAsync(transaction);
@@ -84,18 +84,6 @@ namespace UserTransactions.Application.UseCases.Transaction.Create
             }
 
             return (senderWallet, receiverWallet);
-        }
-
-        private async Task ValidateAuthorizeService()
-        {
-            using var httpClient = _httpClientFactory.CreateClient();
-
-            var response = await httpClient.GetAsync(_authorizeUrl);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ErrorOnValidationException([ResourceMessagesException.TransactionNotAuthorized]);
-            }
         }
     }
 }
