@@ -31,6 +31,8 @@ namespace UserTransactions.API
 
             var app = builder.Build();
 
+            app.UseCors("AllowAllOrigins");
+
             var runMigrations = builder.Configuration.GetValue<bool>("RunMigrations", false);
 
             RunMigrations(app, runMigrations);
