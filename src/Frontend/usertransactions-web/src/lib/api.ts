@@ -1,6 +1,6 @@
 import { TotalAmountResponse, TotalQuantityResponse, ApiErrorResponse } from "./types";
 
-const API_BASE_URL = 'https://localhost:7035/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export class ApiService {
   private static async request<T>(
@@ -23,7 +23,6 @@ export class ApiService {
         try {
           errorData = await response.json();
         } catch {
-          // Se não conseguir fazer parse do JSON, cria um erro genérico
           errorData = {
             traceId: '',
             type: '',
@@ -117,7 +116,7 @@ export class ApiService {
   }
 
   static async getMainHealthStatus(): Promise<string> {
-    const url = 'https://localhost:7035/health';
+    const url = process.env.NEXT_PUBLIC_API_URL_HEALTH!;
     try {
       const response = await fetch(url);
       if (!response.ok) {
