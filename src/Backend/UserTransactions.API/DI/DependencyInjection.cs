@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using UserTransactions.API.Filter;
+using UserTransactions.Domain.Services.Authorize;
 using UserTransactions.Domain.Services.Health;
 using UserTransactions.Domain.Services.Messaging;
 using UserTransactions.Infrastructure.Configuration;
 using UserTransactions.Infrastructure.Persistance;
+using UserTransactions.Infrastructure.Services.Authorize;
 using UserTransactions.Infrastructure.Services.Health;
 using UserTransactions.Infrastructure.Services.Messaging;
 
@@ -88,6 +90,7 @@ namespace UserTransactions.API.DI
         public static void AddService(this IServiceCollection services)
         {
             services.AddScoped<IHealthCheckService, HealthCheckService>();
+            services.AddScoped<IAuthorizeService, AuthorizeService>();
         }
     }
 }

@@ -3,12 +3,13 @@ using UserTransactions.Application.UseCases.Transaction.Create;
 using UserTransactions.Domain.Repositories;
 using UserTransactions.Domain.Repositories.Transaction;
 using UserTransactions.Domain.Repositories.Wallet;
+using UserTransactions.Domain.Services.Authorize;
 using UserTransactions.Domain.Services.Messaging;
 using UserTransactions.Exception.Exceptions;
 using UserTransactions.Tests.Shared.Builders.Dtos.Request.Transactions;
 using UserTransactions.Tests.Shared.Builders.Entities;
 using UserTransactions.Tests.Shared.Builders.Repositories;
-using UserTransactions.Tests.Shared.Mocks;
+using UserTransactions.Tests.Shared.Builders.Services;
 
 namespace UserTransactions.Tests.Application.Transactions.UseCases
 {
@@ -18,8 +19,7 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
         private readonly IWalletRepository _walletRepository;
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
         private readonly IKafkaMessageProducer _messageProducer;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly HttpClient _defaultHttpClient;
+        private readonly IAuthorizeService _authorizeService;
         private readonly ICreateTransactionUseCase _sut;
 
         public CreateTransactionUseCaseTest()
@@ -28,10 +28,8 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             _walletRepository = WalletRepositoryBuilder.Build();
             _unitOfWorkRepository = UnitOfWorkRepositoryBuilder.Build();
             _messageProducer = KafkaMessageProducerBuilder.Build();
-            _httpClientFactory = HttpClientFactoryBuilder.Build();
-            _defaultHttpClient = CreateSuccessHttpClient();
-            HttpClientFactoryBuilder.SetupCreateClient(_defaultHttpClient);
-            _sut = new CreateTransactionUseCase(_transactionRepository, _walletRepository, _unitOfWorkRepository, _httpClientFactory, _messageProducer);
+            _authorizeService = AuthorizeServiceBuilder.Build();
+            _sut = new CreateTransactionUseCase(_transactionRepository, _walletRepository, _unitOfWorkRepository, _authorizeService, _messageProducer);
         }
 
         [Fact]
@@ -52,6 +50,7 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+            AuthorizeServiceBuilder.SetupValidateAuthorizeService();
 
             KafkaMessageProducerBuilder.SetupPublishAsync<object>();
 
@@ -84,6 +83,7 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+            AuthorizeServiceBuilder.SetupValidateAuthorizeService();
 
             KafkaMessageProducerBuilder.SetupPublishAsync<object>();
 
@@ -114,6 +114,7 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+            AuthorizeServiceBuilder.SetupValidateAuthorizeService();
 
             KafkaMessageProducerBuilder.SetupPublishAsync<object>();
 
@@ -272,29 +273,14 @@ namespace UserTransactions.Tests.Application.Transactions.UseCases
             WalletRepositoryBuilder.SetupUpdateAsync();
             TransactionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkRepositoryBuilder.SetupTransactionMethods();
+            AuthorizeServiceBuilder.SetupValidateAuthorizeServiceThrowsException();
 
-            var httpClient = CreateFailureHttpClient();
-            HttpClientFactoryBuilder.SetupCreateClient(httpClient);
 
             // Act
             Func<Task> act = async () => await _sut.ExecuteAsync(request);
 
             // Assert
             await act.Should().ThrowAsync<ErrorOnValidationException>();
-        }
-
-        private static HttpClient CreateSuccessHttpClient()
-        {
-            var mockHandler = new MockHttpMessageHandler();
-            mockHandler.SetupSuccessResponse();
-            return new HttpClient(mockHandler);
-        }
-
-        private static HttpClient CreateFailureHttpClient()
-        {
-            var mockHandler = new MockHttpMessageHandler();
-            mockHandler.SetupFailureResponse();
-            return new HttpClient(mockHandler);
         }
     }
 }
