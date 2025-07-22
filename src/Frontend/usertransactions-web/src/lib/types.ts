@@ -69,3 +69,12 @@ export interface TotalQuantityResponse {
 export interface TotalAmountResponse {
   totalAmount: number;
 }
+
+export interface ApiErrorResponse {
+  traceId: string;
+  type: string;
+  statusCode: number;
+  errorDetails: {
+    messages: string[];
+  };
+}

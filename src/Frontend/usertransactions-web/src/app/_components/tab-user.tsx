@@ -18,41 +18,47 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
-import { useState } from "react";
 import { useApp } from "@/contexts/AppContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createUserSchema, CreateUserFormData } from "@/lib/schemas";
 
 export function TabUser() {
-  const { users, loading, error, success, createUser, clearMessages } =
-    useApp();
+  const { users, loading, createUser } = useApp();
 
-  const [userForm, setUserForm] = useState({
-    fullName: "",
-    email: "",
-    cpf: "",
-    password: "",
-    userType: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateUserFormData>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      cpf: "",
+      password: "",
+      userType: "",
+    },
   });
 
-  const handleUserSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const userTypeValue = watch("userType");
+
+  const onSubmit = async (data: CreateUserFormData) => {
     try {
       await createUser({
-        fullName: userForm.fullName,
-        email: userForm.email,
-        cpf: userForm.cpf,
-        password: userForm.password,
-        userType: Number(userForm.userType),
+        fullName: data.fullName,
+        email: data.email,
+        cpf: data.cpf,
+        password: data.password,
+        userType: Number(data.userType),
       });
 
-      setUserForm({
-        fullName: "",
-        email: "",
-        cpf: "",
-        password: "",
-        userType: "",
-      });
+      reset();
     } catch (err) {
-      console.error("Erro ao cadastrar usuário:", err);
+      console.log("Erro ao cadastrar usuário:", err);
     }
   };
 
@@ -65,75 +71,62 @@ export function TabUser() {
             <CardDescription>Criar usuário comum ou lojista</CardDescription>
           </CardHeader>
           <CardContent>
-            {success && (
-              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                {success}
-                <button
-                  onClick={clearMessages}
-                  className="ml-2 text-green-600 hover:text-green-800"
-                >
-                  ×
-                </button>
-              </div>
-            )}
-            <form onSubmit={handleUserSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName">Nome Completo</Label>
                 <Input
                   id="fullName"
-                  value={userForm.fullName}
-                  onChange={(e) =>
-                    setUserForm({ ...userForm, fullName: e.target.value })
-                  }
+                  {...register("fullName")}
                   placeholder="João Silva"
-                  required
                 />
+                {errors.fullName && (
+                  <p className="text-sm text-red-500">
+                    {errors.fullName.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  value={userForm.email}
-                  onChange={(e) =>
-                    setUserForm({ ...userForm, email: e.target.value })
-                  }
+                  {...register("email")}
                   placeholder="joao@example.com"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cpf">CPF</Label>
                 <Input
                   id="cpf"
-                  value={userForm.cpf}
-                  onChange={(e) =>
-                    setUserForm({ ...userForm, cpf: e.target.value })
-                  }
+                  {...register("cpf")}
                   placeholder="123.456.789-01"
-                  required
                 />
+                {errors.cpf && (
+                  <p className="text-sm text-red-500">{errors.cpf.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   type="password"
-                  value={userForm.password}
-                  onChange={(e) =>
-                    setUserForm({ ...userForm, password: e.target.value })
-                  }
+                  {...register("password")}
                   placeholder="••••••••"
-                  required
                 />
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="userType">Tipo de Usuário</Label>
                 <Select
-                  value={userForm.userType}
-                  onValueChange={(value) =>
-                    setUserForm({ ...userForm, userType: value })
-                  }
+                  value={userTypeValue}
+                  onValueChange={(value) => setValue("userType", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o tipo" />
@@ -143,9 +136,18 @@ export function TabUser() {
                     <SelectItem value="2">Lojista</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.userType && (
+                  <p className="text-sm text-red-500">
+                    {errors.userType.message}
+                  </p>
+                )}
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Cadastrando..." : "Cadastrar Usuário"}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || isSubmitting}
+              >
+                {loading || isSubmitting ? "Cadastrando..." : "Cadastrar Usuário"}
               </Button>
             </form>
           </CardContent>
@@ -161,8 +163,6 @@ export function TabUser() {
           <CardContent>
             {loading ? (
               <p>Carregando...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {users.length === 0 ? (

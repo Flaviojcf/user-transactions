@@ -18,31 +18,44 @@ import {
 } from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
 import { CheckCircle } from "lucide-react";
-import { useState } from "react";
 import { useApp } from "@/contexts/AppContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createTransactionSchema, CreateTransactionFormData } from "@/lib/schemas";
 
 export default function TabTransactions() {
-  const { wallets, transactions, loading, error, createTransaction } =
-    useApp();
+  const { wallets, transactions, loading, createTransaction } = useApp();
 
-  const [transactionForm, setTransactionForm] = useState({
-    amount: "",
-    senderId: "",
-    receiverId: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateTransactionFormData>({
+    resolver: zodResolver(createTransactionSchema),
+    defaultValues: {
+      amount: 0,
+      senderId: "",
+      receiverId: "",
+    },
   });
 
-  const handleTransactionSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const senderIdValue = watch("senderId");
+  const receiverIdValue = watch("receiverId");
+
+  const onSubmit = async (data: CreateTransactionFormData) => {
     try {
       await createTransaction({
-        amount: parseFloat(transactionForm.amount),
-        senderId: transactionForm.senderId,
-        receiverId: transactionForm.receiverId,
+        amount: data.amount,
+        senderId: data.senderId,
+        receiverId: data.receiverId,
       });
 
-      setTransactionForm({ amount: "", senderId: "", receiverId: "" });
+      reset();
     } catch (err) {
-      console.error("Erro ao criar transação:", err);
+      console.log("Erro ao criar transação:", err);
     }
   };
 
@@ -57,31 +70,27 @@ export default function TabTransactions() {
             <CardDescription>Transferir valor entre carteiras</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleTransactionSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="amount">Valor (R$)</Label>
                 <Input
                   id="amount"
                   type="number"
                   step="0.01"
-                  value={transactionForm.amount}
-                  onChange={(e) =>
-                    setTransactionForm({
-                      ...transactionForm,
-                      amount: e.target.value,
-                    })
-                  }
+                  {...register("amount", { valueAsNumber: true })}
                   placeholder="100.50"
-                  required
                 />
+                {errors.amount && (
+                  <p className="text-sm text-red-500">
+                    {errors.amount.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="senderId">Remetente</Label>
                 <Select
-                  value={transactionForm.senderId}
-                  onValueChange={(value) =>
-                    setTransactionForm({ ...transactionForm, senderId: value })
-                  }
+                  value={senderIdValue}
+                  onValueChange={(value) => setValue("senderId", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o remetente" />
@@ -97,17 +106,17 @@ export default function TabTransactions() {
                     })}
                   </SelectContent>
                 </Select>
+                {errors.senderId && (
+                  <p className="text-sm text-red-500">
+                    {errors.senderId.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="receiverId">Destinatário</Label>
                 <Select
-                  value={transactionForm.receiverId}
-                  onValueChange={(value) =>
-                    setTransactionForm({
-                      ...transactionForm,
-                      receiverId: value,
-                    })
-                  }
+                  value={receiverIdValue}
+                  onValueChange={(value) => setValue("receiverId", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o destinatário" />
@@ -121,9 +130,18 @@ export default function TabTransactions() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.receiverId && (
+                  <p className="text-sm text-red-500">
+                    {errors.receiverId.message}
+                  </p>
+                )}
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Processando..." : "Processar Transação"}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || isSubmitting}
+              >
+                {loading || isSubmitting ? "Processando..." : "Processar Transação"}
               </Button>
             </form>
           </CardContent>
@@ -137,8 +155,6 @@ export default function TabTransactions() {
           <CardContent>
             {loading ? (
               <p>Carregando...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {transactions.length === 0 ? (

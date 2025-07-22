@@ -1,0 +1,90 @@
+# Dependências
+node_modules
+npm-debug.log*
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Arquivos de desenvolvimento
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory usado por ferramentas como istanbul
+coverage
+*.lcov
+
+# Arquivos de cache
+.npm
+.eslintcache
+
+# Arquivos do editor/IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# Arquivos de teste
+__tests__
+**/*.test.js
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.ts
+**/*.spec.tsx
+
+# Documentação
+README.md
+CHANGELOG.md
+LICENSE
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Storybook
+.storybook
+storybook-static
+
+# Arquivos temporários
+tmp
+temp
+
+src/Backend
+src/Backend/*
+*.cs
+*.csproj
+*.sln

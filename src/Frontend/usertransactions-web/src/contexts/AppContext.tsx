@@ -15,16 +15,16 @@ import {
   TotalAmountResponse,
   HealthStatus,
   HealthService,
+  ApiErrorResponse,
 } from "@/lib/types";
 import { ApiService } from "@/lib/api";
+import { handleApiError, showSuccessMessage } from "@/lib/utils";
 
 interface AppContextType {
   users: User[];
   wallets: Wallet[];
   transactions: Transaction[];
   loading: boolean;
-  error: string | null;
-  success: string | null;
 
   createUser: (userData: {
     fullName: string;
@@ -43,7 +43,6 @@ interface AppContextType {
   }) => Promise<void>;
 
   refreshData: () => Promise<void>;
-  clearMessages: () => void;
 
   getUsersCount: () => Promise<TotalQuantityResponse>;
   getWalletsCount: () => Promise<TotalQuantityResponse>;
@@ -60,17 +59,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  const clearMessages = () => {
-    setError(null);
-    setSuccess(null);
-  };
 
   const refreshData = async () => {
     setLoading(true);
-    setError(null);
 
     try {
       const [usersData, walletsData, transactionsData] = await Promise.all([
@@ -83,7 +74,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setWallets(Array.isArray(walletsData) ? walletsData : []);
       setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro desconhecido");
+      handleApiError(err as ApiErrorResponse);
     } finally {
       setLoading(false);
     }
@@ -97,7 +88,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     userType: number;
   }) => {
     setLoading(true);
-    setError(null);
 
     try {
       await ApiService.createUser({
@@ -110,9 +100,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       const usersData = await ApiService.getAllUsers();
       setUsers(Array.isArray(usersData) ? usersData : []);
-      setSuccess("Usuário cadastrado com sucesso!");
+      showSuccessMessage("Usuário cadastrado com sucesso!");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar usuário");
+      handleApiError(err as ApiErrorResponse);
       throw err;
     } finally {
       setLoading(false);
@@ -121,16 +111,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const createWallet = async (userId: string) => {
     setLoading(true);
-    setError(null);
 
     try {
       await ApiService.createWallet({ UserId: userId });
 
       const walletsData = await ApiService.getAllWallets();
       setWallets(Array.isArray(walletsData) ? walletsData : []);
-      setSuccess("Carteira criada com sucesso!");
+      showSuccessMessage("Carteira criada com sucesso!");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar carteira");
+      handleApiError(err as ApiErrorResponse);
       throw err;
     } finally {
       setLoading(false);
@@ -143,7 +132,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     receiverId: string;
   }) => {
     setLoading(true);
-    setError(null);
 
     try {
       await ApiService.createTransaction(transactionData);
@@ -155,9 +143,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
       setWallets(Array.isArray(walletsData) ? walletsData : []);
-      setSuccess("Transação realizada com sucesso!");
+      showSuccessMessage("Transação realizada com sucesso!");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar transação");
+      handleApiError(err as ApiErrorResponse);
       throw err;
     } finally {
       setLoading(false);
@@ -243,13 +231,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     wallets,
     transactions,
     loading,
-    error,
-    success,
     createUser,
     createWallet,
     createTransaction,
     refreshData,
-    clearMessages,
     getUsersCount,
     getWalletsCount,
     getTransactionsCount,

@@ -99,6 +99,10 @@ services:
       - Kafka__MessageTimeoutMs=5000
       - Kafka__RequestTimeoutMs=30000
       - RunMigrations=true
+      - HealthCheck__KafkaUIUrl=http://kafka-ui-usertransactions:8080/actuator/health
+      - HealthCheck__KafkaUrl=kafka:29092
+      - HealthCheck__SqlServerUrl=Server=sqlserver;Database=userTransactions;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+      - HealthCheck__KafkaHealthTopic=health-check
     networks:
       - network-usertransactions
     restart: unless-stopped
@@ -126,6 +130,22 @@ services:
       - SendGrid__ApiKey=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
       - SendGrid__FromEmail=flaviotricolor39@gmail.com
       - SendGrid__FromName=flaviojcf
+    networks:
+      - network-usertransactions
+    restart: unless-stopped
+
+  frontend-usertransactions:
+    build:
+      context: src/Frontend/usertransactions-web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://api-usertransactions:8080/v1
+        NEXT_PUBLIC_API_URL_HEALTH: http://api-usertransactions:8080/health
+    container_name: frontend-usertransactions
+    depends_on:
+      - api-usertransactions
+    ports:
+      - "3000:3000"
     networks:
       - network-usertransactions
     restart: unless-stopped

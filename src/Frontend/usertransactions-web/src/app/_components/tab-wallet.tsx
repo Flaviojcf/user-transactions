@@ -17,25 +17,37 @@ import {
 } from "@/components/ui/select";
 import { TabsContent } from "@/components/ui/tabs";
 import { ArrowRightLeft, CheckCircle, Wallet } from "lucide-react";
-import { useState } from "react";
 import { useApp } from "@/contexts/AppContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createWalletSchema, CreateWalletFormData } from "@/lib/schemas";
 
 export default function TabWallet() {
-  const { users, wallets, loading, error, createWallet } = useApp();
-  const [selectedUserId, setSelectedUserId] = useState("");
+  const { users, wallets, loading, createWallet } = useApp();
 
-  const handleWalletSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedUserId) return;
+  const {
+    setValue,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateWalletFormData>({
+    resolver: zodResolver(createWalletSchema),
+    defaultValues: {
+      userId: "",
+    },
+  });
 
+  const userIdValue = watch("userId");
+
+  const onSubmit = async (data: CreateWalletFormData) => {
     try {
-      await createWallet(selectedUserId);
-      setSelectedUserId("");
+      await createWallet(data.userId);
+      reset();
     } catch (err) {
-      console.error("Erro ao criar carteira:", err);
+      console.log("Erro ao criar carteira:", err);
     }
   };
-
 
   return (
     <TabsContent value="wallets" className="space-y-6">
@@ -48,13 +60,12 @@ export default function TabWallet() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleWalletSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="userId">Selecionar Usuário</Label>
                 <Select
-                  value={selectedUserId}
-                  onValueChange={setSelectedUserId}
-                  required
+                  value={userIdValue}
+                  onValueChange={(value) => setValue("userId", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione um usuário" />
@@ -67,6 +78,11 @@ export default function TabWallet() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.userId && (
+                  <p className="text-sm text-red-500">
+                    {errors.userId.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Saldo Inicial</Label>
@@ -99,9 +115,13 @@ export default function TabWallet() {
                   </div>
                 </div>
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || isSubmitting}
+              >
                 <Wallet className="h-4 w-4 mr-2" />
-                {loading ? "Criando..." : "Criar Carteira"}
+                {loading || isSubmitting ? "Criando..." : "Criar Carteira"}
               </Button>
             </form>
           </CardContent>
@@ -117,8 +137,6 @@ export default function TabWallet() {
           <CardContent>
             {loading ? (
               <p>Carregando...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {wallets.length === 0 ? (
