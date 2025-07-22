@@ -26,6 +26,7 @@ namespace UserTransactions.API.DI
             services.AddHttp();
             services.AddKafka(configuration);
             services.AddService();
+            services.AddCors();
         }
 
         public static void AddVersioning(this IServiceCollection services)
@@ -91,6 +92,20 @@ namespace UserTransactions.API.DI
         {
             services.AddScoped<IHealthCheckService, HealthCheckService>();
             services.AddScoped<IAuthorizeService, AuthorizeService>();
+        }
+
+        public static void AddCors(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
         }
     }
 }
